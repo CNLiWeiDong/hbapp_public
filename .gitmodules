@@ -1,0 +1,4 @@
+
+[submodule "appbase"]
+	path = appbase
+	url = https://github.com:CNLiWeiDong/appbase.git
