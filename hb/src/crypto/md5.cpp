@@ -1,5 +1,5 @@
-#include <hb/crypto/md5.hpp>
-#include <hb/crypto/cryptopp.hpp>
+#include <hb/crypto/md5.h>
+#include <hb/crypto/cryptopp.h>
 
 namespace hb { namespace crypto {
     

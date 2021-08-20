@@ -1,12 +1,12 @@
 #define BOOST_TEST_MODULE cypher_suites
 #include <boost/test/unit_test.hpp>
-#include <hb/zip/zlib.hpp>
-#include <hb/crypto/aes.hpp>
-#include <hb/crypto/base.hpp>
-#include <hb/crypto/hex.hpp>
-#include <hb/crypto/md5.hpp>
-#include <hb/crypto/sha.hpp>
-#include <hb/crypto/rsa.hpp>
+#include <hb/zip/zlib.h>
+#include <hb/crypto/aes.h>
+#include <hb/crypto/base.h>
+#include <hb/crypto/hex.h>
+#include <hb/crypto/md5.h>
+#include <hb/crypto/sha.h>
+#include <hb/crypto/rsa.h>
 #include <hb/log/log.h>
 #include <hb/http/http.h>
 #include <hb/https/https.h>
@@ -104,7 +104,7 @@ BOOST_AUTO_TEST_CASE(test_base64) try {
       "789012345678901234567890123456789012345678901234567890123456789012345678"
       "901234567890");
   auto encrypt_data = base64(source_str);
-  auto decrypt_data = base64_str(encrypt_data);
+  auto decrypt_data = base64_to_str(encrypt_data);
   BOOST_CHECK_EQUAL(source_str, decrypt_data);
 } catch (...) {
   log_error<<"test_base64 error!";
@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(test_hex) try {
       "789012345678901234567890123456789012345678901234567890123456789012345678"
       "901234567890");
   auto encrypt_data = hex(source_str);
-  auto decrypt_data = hex_str(encrypt_data);
+  auto decrypt_data = hex_to_str(encrypt_data);
   BOOST_CHECK_EQUAL(source_str,
                     string(decrypt_data.begin(), decrypt_data.end()));
 } catch (...) {

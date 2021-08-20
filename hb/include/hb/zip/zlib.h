@@ -1,6 +1,6 @@
 #pragma once
 
-#include <hb/types/types.hpp>
+#include <hb/types/types.h>
 #include <string>
 
 using namespace std;

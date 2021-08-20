@@ -1,7 +1,7 @@
 #include <boost/iostreams/device/back_inserter.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
-#include <hb/zip/zlib.hpp>
+#include <hb/zip/zlib.h>
 
 namespace hb { namespace zip {  
 

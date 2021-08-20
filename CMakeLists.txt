@@ -171,15 +171,5 @@ add_definitions(-DBOOST_ASIO_DISABLE_STD_EXPERIMENTAL_STRING_VIEW)
 message(STATUS "Boost_LIBRARIES:${Boost_LIBRARIES}")
 
 add_subdirectory(appbase)
-# add_subdirectory(plugins)
+add_subdirectory(hb)
 # add_subdirectory(apps)
-
-
-
-
-
-
-
-
-
-

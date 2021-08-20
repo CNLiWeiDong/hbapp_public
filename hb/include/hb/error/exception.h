@@ -26,7 +26,7 @@ namespace hb::error {
 
     class hb_exception_base: virtual public std::exception, virtual public boost::exception {
     public:
-        virtual int code() = 0;
+        virtual uint64_t code() = 0;
         virtual string msg() = 0;
         virtual string name() = 0;
     };
@@ -34,9 +34,6 @@ namespace hb::error {
     template<typename Impl, uint64_t code_num>
     class hb_exception: public hb_exception_base
     { 
-    protected:
-        hb_exception():name_(boost::core::demangle(typeid(Impl).name())) 
-        { }
     public:
         hb_exception():
                 code_(code_num), 
@@ -84,9 +81,9 @@ namespace hb::error {
         uint64_t code_;
     };
 
-    class assert_exception : public hb_exception<assert_exception> {
+    class assert_exception : public hb_exception<assert_exception, SN("assert")> {
         public:
-        assert_exception():hb_exception<assert_exception, N("assert")>() {
+        assert_exception():hb_exception<assert_exception, SN("assert")>() {
 
         }
     };

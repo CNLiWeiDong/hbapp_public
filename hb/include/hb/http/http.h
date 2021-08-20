@@ -1,5 +1,5 @@
 #pragma once
-#include <hb/http/session.hpp>
+#include <hb/http/session.h>
 
 namespace hb {  namespace http {
     class http

@@ -12,7 +12,6 @@ namespace hb { namespace error {
         // pt_res.put("stack",*boost::get_error_info<exception_stack>(e));
         pt_res.put("code",*boost::get_error_info<err_code>(e));
         pt_res.put("msg",*boost::get_error_info<err_msg>(e));
-        pt_res.put("title",*boost::get_error_info<err_title>(e));
         pt_res.put("type",*boost::get_error_info<err_type>(e));
         pt_res.put("file",*boost::get_error_info<err_file>(e));
         pt_res.put("function",*boost::get_error_info<err_fun>(e));

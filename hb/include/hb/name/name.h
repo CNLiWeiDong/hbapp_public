@@ -36,7 +36,7 @@ namespace hb::name {
       return name;
    }
 
-   static constexpr string name_to_string(uint64_t value) {
+   static string name_to_string(uint64_t value) {
      static const char* charmap = ".12345abcdefghijklmnopqrstuvwxyz";
       string str(13,'.');
       uint64_t tmp = value;
@@ -51,5 +51,5 @@ namespace hb::name {
    }
 }
 
-#define N(X) hb::name::string_to_name(#X)
-#define name_str(X) hb::name::name_to_string(#X)
+#define SN(X) hb::name::string_to_name(#X)
+#define NS(X) hb::name::name_to_string(#X)
