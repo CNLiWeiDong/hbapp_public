@@ -2,7 +2,7 @@
 
 #include <hb/error/exception.h>
 
-namespace hb {  namespace sycn {
+namespace hb::https {
     using namespace hb::error;
 
     class hb_https_exception : public hb_exception<hb_https_exception, SN("https")> {
@@ -11,4 +11,4 @@ namespace hb {  namespace sycn {
 
         }
     };
-} }
+} 

@@ -5,9 +5,9 @@
 namespace hb{ namespace plugin {
     using namespace hb::error;
 
-    class mysql_exception : public hb_exception<mysql_exception> {
+    class mysql_exception : public hb_exception<mysql_exception, SN("mysql.p")> {
     public:
-        mysql_exception():hb_exception<mysql_exception>(mysql_plugin_no, get_title(mysql_plugin_no)) {
+        mysql_exception():hb_exception<mysql_exception, SN("mysql.p")>() {
 
         }
     };

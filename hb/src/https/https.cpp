@@ -1,7 +1,7 @@
 #include <hb/https/https.h>
-#include <hb/error/exception.h>
+#include <hb/https/https_error.h>>
 
-namespace hb {  namespace https {
+namespace hb::https {
     void https::load_certificates()
     {
         if(cert_str_.empty() && ctx_==nullptr){
@@ -19,9 +19,9 @@ namespace hb {  namespace https {
         // Verify the remote server's certificate
         ctx_->set_verify_mode(ssl::verify_peer);
         if(ec){
-
+            // throw boost::system::system_error{ec};
+            hb_throw(hb_https_exception().msg("load_certificates error no: %d msg: %s", ec.value(), ec.message().c_str()));
         }
-            throw boost::system::system_error{ec};
     }
     int https::request()
     {
@@ -38,7 +38,8 @@ namespace hb {  namespace https {
             if(! SSL_set_tlsext_host_name(stream.native_handle(), host_.c_str()))
             {
                 beast::error_code ec{static_cast<int>(::ERR_get_error()), net::error::get_ssl_category()};
-                throw beast::system_error{ec};
+                hb_throw(hb_https_exception().msg("load_certificates beaset::error_code: %d message: %s", ec.value(), ec.message().c_str()));
+                // throw beast::system_error{ec};
             }
             // Look up the domain name
             auto const results = resolver.resolve(host_, port_);
@@ -97,4 +98,4 @@ namespace hb {  namespace https {
         auto sess = std::make_shared<session>(ioc, *ctx_, req_, callback);
         sess->request(host_, port_); 
     }
-} }
+} 

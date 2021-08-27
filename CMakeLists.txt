@@ -172,4 +172,4 @@ message(STATUS "Boost_LIBRARIES:${Boost_LIBRARIES}")
 
 add_subdirectory(appbase)
 add_subdirectory(hb)
-# add_subdirectory(apps)
+add_subdirectory(plugins)
