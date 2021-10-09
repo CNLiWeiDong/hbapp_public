@@ -19,17 +19,12 @@ namespace hb{ namespace plugin {
         public:
             mysql_plugin_api(shared_ptr<mysql_plugin_impl> _impl):impl(_impl){}
 
-            shared_ptr<my_connection> connect(const char* db = 0, const char* ip = 0,
+            shared_ptr<mysql_connection> connect(const char* db = 0, const char* ip = 0,
                                                 const char* user = 0, const char* password = 0,
                                                 unsigned int port = 0){
                 return impl->connect(db,ip,user,password,port);
             }
-            // std::shared_ptr<mysqlpp::Transaction> transaction(const char* db = 0, const char* server = 0,
-            //                                     const char* user = 0, const char* password = 0,
-            //                                     unsigned int port = 0){
-            //     return impl->transaction(db,ip,user,password,port);
-            // }
-            void close(const shared_ptr<my_connection> &con){
+            void close(const shared_ptr<mysql_connection> &con){
                 impl->close(con);
             }
         private:

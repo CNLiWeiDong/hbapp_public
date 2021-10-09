@@ -9,11 +9,11 @@
 namespace hb { namespace plugin {
 
 
-        shared_ptr<my_connection> mysql_plugin_impl::connect(const char* db, const char* server,
+        shared_ptr<mysql_connection> mysql_plugin_impl::connect(const char* db, const char* server,
                                                        const char* user, const char* password,
                                                        unsigned int port){
             string pool_key = server + to_string(port)  + db;
-            shared_ptr<my_connection> con_ptr = nullptr;
+            shared_ptr<mysql_connection> con_ptr = nullptr;
             do{
                 std::unique_lock<std::mutex> lock(pool_mutex_);
                 auto it = all_pools_.find(pool_key);
@@ -38,14 +38,14 @@ namespace hb { namespace plugin {
                 con_ptr->open();
                 return con_ptr;
             }
-            con_ptr = make_shared<my_connection>();
+            con_ptr = make_shared<mysql_connection>();
             //con_ptr->thread_start() 创建时会自动启动
             if(!con_ptr->connect(db,server,user,password,port)) {
                 hb_throw(hb::plugin::mysql_exception().msg("connect sql server error!"));
             }
             return con_ptr;
         }
-        void mysql_plugin_impl::close(const shared_ptr<my_connection> &con){
+        void mysql_plugin_impl::close(const shared_ptr<mysql_connection> &con){
             if(con->is_stoped())
                 return;
             string pool_key = con->server()+to_string(con->port()) + con->db();

@@ -4,13 +4,14 @@
 
 #include <string>
 #include <mysql++.h>
+#include <boost/noncopyable.hpp>
 
 namespace hb{ namespace mysql_plugin {
         using namespace std;
         using namespace mysqlpp;
 
         class mysql_plugin_impl;
-        class my_connection : public Connection{
+        class mysql_connection : public Connection , public boost::noncopyable{
         public:
             virtual bool connect(const char* db = 0, const char* server = 0,
                                  const char* user = 0, const char* password = 0,
@@ -31,17 +32,10 @@ namespace hb{ namespace mysql_plugin {
             void stop(){ stoped_ = true; }
             void open() {stoped_ = false;}
             bool is_stoped() { return stoped_;}
-            my_connection():Connection(true){
+            mysql_connection():Connection(true){
 
             }
             friend class mysql_plugin_impl;
-        private:
-            
-            //防止复制
-            my_connection(const my_connection &&c) = delete;
-            my_connection(const my_connection &c) = delete;
-            void operator=(const my_connection &c) = delete;
-            void operator=(const my_connection &&c) = delete;
         public:
             inline const string& server(){ return server_; }
             inline const int& port(){ return port_; }
