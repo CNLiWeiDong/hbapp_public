@@ -8,19 +8,49 @@
 namespace hb{ namespace plugin {
         http_server_plugin_impl::~http_server_plugin_impl(){
         }
+        std::shared_ptr<ssl::context> http_server_plugin_impl::load_ssl_cert(){
+            auto self = shared_from_this();
+            std::shared_ptr<ssl::context> ctx = make_shared<ssl::context>(ssl::context::tlsv12);
+            ctx->set_options(
+                ssl::context::default_workarounds |
+                ssl::context::no_sslv2 |
+                ssl::context::single_dh_use);
+
+            ctx->set_password_callback(
+                [self](std::size_t,
+                    ssl::context_base::password_purpose)
+                {
+                    return self->http_options_.private_password.c_str();
+                });
+            auto config_path = app().config_dir();
+            ctx->use_certificate_chain_file((config_path/http_options_.certificate_file).string());
+            ctx->use_private_key_file((config_path/http_options_.private_file).string(), ssl::context::pem);
+            ctx->use_tmp_dh_file((config_path/http_options_.dhparam_file).string());
+            return ctx;
+        }
         void http_server_plugin_impl::start_http_server(std::shared_ptr<net::io_context> ioc){
             auto const address = net::ip::make_address(http_options_.host);
             auto const port = static_cast<unsigned short>(http_options_.port);
-            auto listien = std::make_shared<listener>(
+            auto l = std::make_shared<listener>(
                 ioc,
                 tcp::endpoint{address, port});
-            listien->set_body_limit(http_options_.body_size);
-            listien->set_expires_seconds(http_options_.expires_seonds);
-            listien->run();
+            l->set_body_limit(http_options_.body_size);
+            l->set_expires_seconds(http_options_.expires_seonds);
+            l->run();
             log_info<<"http server ip: "<<http_options_.host<<" port: "<<http_options_.port<<" starting!";
         }
         void http_server_plugin_impl::start_https_server(std::shared_ptr<net::io_context> ioc){
-            
+            auto const address = net::ip::make_address(http_options_.host);
+            auto const port = static_cast<unsigned short>(http_options_.port);
+            auto ctx = load_ssl_cert();
+            auto l = std::make_shared<listener>(
+                ioc,
+                ctx,
+                tcp::endpoint{address, port});
+            l->set_body_limit(http_options_.body_size);
+            l->set_expires_seconds(http_options_.expires_seonds);
+            l->run();
+            log_info<<"https server ip: "<<http_options_.host<<" port: "<<http_options_.port<<" starting!";
         }
         void http_server_plugin_impl::start(){
             auto & thread_plugin = app().get_plugin<thread_pool_plugin>();

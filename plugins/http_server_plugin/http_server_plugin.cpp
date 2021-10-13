@@ -17,6 +17,8 @@ namespace hb{ namespace plugin{
                         ("http-expires-seconds", bpo::value<uint32_t>()->default_value(30), "The connect keep live seconds time")
                         // ("http-enable-path", bpo::value<vector<string>>(), "The connect keep live seconds time")
                         ("https-enable", boost::program_options::value<bool>()->default_value(false), "If set to false, then the http server is valid")
+                        ("https-dhparam-file", bpo::value<string>(),
+                            "Filename with the dhparam chain to present on https connections. PEM format. File path in config-dir.")
                         ("https-certificate-file", bpo::value<string>(),
                             "Filename with the certificate chain to present on https connections. PEM format. File path in config-dir.")
                         ("https-private-file", bpo::value<string>(),
@@ -31,7 +33,8 @@ namespace hb{ namespace plugin{
                     options.at( "https-enable" ).as<bool>() &&
                     (
                         !( options.count( "https-certificate-file" ) && options.at( "https-certificate-file" ).as<string>().length()) ||
-                        !( options.count( "https-private-file" ) && options.at( "https-private-file" ).as<string>().length())
+                        !( options.count( "https-private-file" ) && options.at( "https-private-file" ).as<string>().length()) ||
+                        !( options.count( "https-dhparam-file" ) && options.at( "https-dhparam-file" ).as<string>().length()) 
                     )
                 )
                 {
@@ -42,6 +45,9 @@ namespace hb{ namespace plugin{
                 string certificate;
                 if( options.count( "https-certificate-file" ) && options.at( "https-certificate-file" ).as<string>().length())
                     certificate = options.at( "https-certificate-file" ).as<string>();
+                string dhparam;
+                if( options.count( "https-dhparam-file" ) && options.at( "https-dhparam-file" ).as<string>().length())
+                    dhparam = options.at( "https-dhparam-file" ).as<string>();
                 string private_key;
                 if( options.count( "https-private-file" ) && options.at( "https-private-file" ).as<string>().length())
                     private_key = options.at( "https-private-file" ).as<string>();
@@ -52,6 +58,7 @@ namespace hb{ namespace plugin{
                     port:           options.at( "http-port" ).as<int>(),
                     body_size:      options.at( "http-body-size" ).as<uint64_t>(),
                     expires_seonds: options.at( "http-expires-seconds" ).as<uint32_t>(),
+                    dhparam_file:   dhparam,
                     certificate_file:   certificate,
                     private_file:       private_key,
                     private_password:   options.at( "https-private-password" ).as<string>()

@@ -64,7 +64,7 @@ namespace hb { namespace http_server {
             else
             {
                 if (have_ssl_) {
-                    auto sess = std::make_shared<session_ssl>(std::move(socket), *ctx_);
+                    auto sess = std::make_shared<session_ssl>(std::move(socket), std::ref(*ctx_));
                     // sess->set_deal_fun(deal_fun_);
                     sess->set_body_limit(body_limit_);
                     sess->set_expires_seconds(expires_seconds_);

@@ -26,6 +26,7 @@ namespace hb{ namespace plugin {
         int port;
         uint64_t body_size;
         uint32_t expires_seonds;
+        string dhparam_file;
         string certificate_file;
         string private_file;
         string private_password;
@@ -40,7 +41,7 @@ namespace hb{ namespace plugin {
         ~http_server_plugin_impl();
         void start();
     private:
-       
+        std::shared_ptr<ssl::context> load_ssl_cert();
         void start_http_server(std::shared_ptr<net::io_context> ioc);
         void start_https_server(std::shared_ptr<net::io_context> ioc);
     private:

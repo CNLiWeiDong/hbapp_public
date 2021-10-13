@@ -39,7 +39,7 @@ namespace hb { namespace http_server {
     public:
         friend struct send_lambda;
         // Take ownership of the socket
-        explicit session_ssl(tcp::socket&& socket, ssl::context& ctx) 
+        explicit session_ssl(tcp::socket&& socket, ssl::context &ctx) 
             : stream_(std::move(socket), ctx)
             , lambda_(*this)
         {

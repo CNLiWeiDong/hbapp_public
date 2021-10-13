@@ -60,7 +60,5 @@ namespace hb::http_server {
         static signal_results deal_request(const REQ_TYPE &&req);
         template<class REQ_TYPE, class Send>
         static void request(const REQ_TYPE&& req, Send&& send);
-
-        static void load_server_certificate(boost::asio::ssl::context& ctx);
     };
 }
