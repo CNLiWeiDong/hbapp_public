@@ -1,5 +1,5 @@
 #pragma once
-#include <hb/http_server_plugin/common.h>
+#include <hb/http_server_plugin/handle.h>
 
 namespace hb { namespace http_server {
     // Handles an HTTP server connection
@@ -36,7 +36,6 @@ namespace hb { namespace http_server {
         send_lambda lambda_;
         uint64_t body_limit_ = {1048576};
         uint32_t expires_seconds_ = {30};
-        deal_fun_type deal_fun_ = { nullptr };
     public:
         friend struct send_lambda;
         // Take ownership of the socket
@@ -56,7 +55,6 @@ namespace hb { namespace http_server {
         void do_close();
         void do_close_read();
         void do_close_write();
-        void set_deal_fun(const deal_fun_type& fun) { deal_fun_ = fun; };
         void set_body_limit(const uint64_t& limit) { 
             body_limit_ = limit; 
             req_parser_.body_limit(limit); 

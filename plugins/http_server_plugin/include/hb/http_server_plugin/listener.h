@@ -1,5 +1,5 @@
 #pragma once
-#include <hb/http_server_plugin/common.h>
+#include <hb/http_server_plugin/handle.h>
 
 namespace hb { namespace http_server {
     // Accepts incoming connections and launches the sessions
@@ -12,7 +12,7 @@ namespace hb { namespace http_server {
         bool have_ssl_;
         uint64_t body_limit_ = {1048576};
         uint32_t expires_seconds_ = {30};
-        deal_fun_type deal_fun_ = { nullptr };
+        // deal_fun_type deal_fun_ = { nullptr };
     public:
         listener(
             std::shared_ptr<net::io_context> ioc,
@@ -39,7 +39,7 @@ namespace hb { namespace http_server {
         };
         // Start accepting incoming connections
         void run();
-        void set_deal_fun(const deal_fun_type& fun) { deal_fun_ = fun; };
+        // void set_deal_fun(const deal_fun_type& fun) { deal_fun_ = fun; };
         void set_body_limit(const uint64_t& limit) { body_limit_ = limit; };
         void set_expires_seconds(const uint32_t& secondes) { expires_seconds_ = secondes; };
     private:

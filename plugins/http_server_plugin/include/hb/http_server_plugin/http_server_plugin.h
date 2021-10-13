@@ -20,8 +20,8 @@ namespace hb{ namespace plugin {
     class http_server_plugin_api{
     public:
         http_server_plugin_api(shared_ptr<http_server_plugin_impl> _impl):impl(_impl){}
-        void connect(const string &signal_name, std::function<deal_result_type(const deal_param_type &)> request_deal_fun ){
-            impl->connect_request(signal_name,request_deal_fun);
+        void connect(const string &target, deal_fun fun){
+            handle::connect(target,fun);
         }
     private:
         shared_ptr<http_server_plugin_impl> impl;

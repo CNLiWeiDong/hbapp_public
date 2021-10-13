@@ -58,7 +58,7 @@ namespace hb { namespace http_server {
             return do_close();
         }
         // Send the response
-        handle_request(std::move(req_parser_.get()), deal_fun_, lambda_);
+        handle::request(std::move(req_parser_.get()), lambda_);
     }
     void session_ssl::on_write(bool close, beast::error_code ec, std::size_t bytes_transferred)
     {

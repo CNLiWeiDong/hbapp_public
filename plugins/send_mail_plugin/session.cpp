@@ -1,10 +1,6 @@
 #include <hb/send_mail_plugin/session.h>
 #include <hb/log/log.h>
-<<<<<<< HEAD
-#include <hb/crypto/base.hpp>
-=======
 #include <hb/crypto/base.h>
->>>>>>> 52017c3263517f7fdc73b63c5a3bdff1fc448352
 #include <hb/send_mail_plugin/send_mail_error.h>
 
 namespace hb{ namespace plugin {

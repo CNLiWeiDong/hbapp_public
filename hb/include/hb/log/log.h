@@ -73,7 +73,7 @@ namespace hb { namespace log {
 #define log_info    LOG_LOCATION(hb::log::trivial::info)
 #define log_warn    LOG_LOCATION(hb::log::trivial::warning)
 #define log_error   LOG_LOCATION(hb::log::trivial::error)
-#define log_fatal   LOG_LOCATION(hb::log::trivial::fatal)
+#define log_fatal   LOG_LOCATION(hb::log::trivial::fatal) 
 
 #define log_max_length 512
 

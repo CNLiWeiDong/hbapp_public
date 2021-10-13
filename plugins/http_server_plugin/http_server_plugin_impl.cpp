@@ -16,10 +16,6 @@ namespace hb{ namespace plugin {
                 tcp::endpoint{address, port});
             listien->set_body_limit(http_options_.body_size);
             listien->set_expires_seconds(http_options_.expires_seonds);
-            auto self = shared_from_this();
-            listien->set_deal_fun([self](auto param){
-                return self->notify_request_deal(param);
-            });
             listien->run();
             log_info<<"http server ip: "<<http_options_.host<<" port: "<<http_options_.port<<" starting!";
         }
@@ -36,29 +32,5 @@ namespace hb{ namespace plugin {
             {
                 start_http_server(ioc);
             }
-        }
-        deal_results_type http_server_plugin_impl::notify_request_deal(const deal_param_type &req_param){
-            decltype(registed_signals_.end()) it;
-            {
-                std::unique_lock<std::mutex> lock(signals_mutex_);
-                it = registed_signals_.find(req_param.get<string>("method"));
-            }
-            if(it==registed_signals_.end())
-                return {};
-            return (it->second)(req_param);
-        }
-        void http_server_plugin_impl::connect_request(const string &signal_name, std::function<deal_result_type(const deal_param_type &)> request_deal_fun )
-        {
-            auto &sig = regist_signal(signal_name);
-            sig.connect(request_deal_fun);
-        }
-        signal_type& http_server_plugin_impl::regist_signal(const string &signal_name){
-            std::unique_lock<std::mutex> lock(signals_mutex_); 
-            auto it = registed_signals_.find(signal_name);
-            if(it!=registed_signals_.end())
-                return it->second;
-            signal_type sig;
-            registed_signals_.insert(decltype(registed_signals_)::value_type(signal_name,std::move(sig)));
-            return registed_signals_[signal_name];
         }
 } }
