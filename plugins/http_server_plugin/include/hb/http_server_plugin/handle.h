@@ -33,20 +33,21 @@ namespace hb::http_server {
     using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
     using namespace boost::property_tree;
 
-    typedef vector<string> signal_results;
-    typedef function<string(const string &)> deal_fun;
-    template <typename T> 
-    struct all_element 
-    { 
-        typedef T result_type; 
+    // typedef vector<string> signal_results;
+    typedef function<ptree(const ptree &)> deal_fun;
+    // template <typename T> 
+    // struct all_element 
+    // { 
+    //     typedef T result_type; 
         
-        template <typename InputIterator> 
-        T operator()(InputIterator first, InputIterator last) const 
-        { 
-            return T(first, last); 
-        } 
-    };
-    typedef boost::signals2::signal<string(const string &), all_element<signal_results>> signal_type;
+    //     template <typename InputIterator> 
+    //     T operator()(InputIterator first, InputIterator last) const 
+    //     { 
+    //         return T(first, last); 
+    //     } 
+    // };
+    // typedef boost::signals2::signal<string(const string &), all_element<signal_results>> signal_type;
+    typedef boost::signals2::signal<ptree(const ptree &)> signal_type;
 
     class handle {
         public:
@@ -57,7 +58,7 @@ namespace hb::http_server {
         static void connect(const string &target, deal_fun fun);
         static vector<string> split_target(const string& target);
         template<class REQ_TYPE>
-        static signal_results deal_request(const REQ_TYPE &&req);
+        static ptree deal_request(const REQ_TYPE &&req);
         template<class REQ_TYPE, class Send>
         static void request(const REQ_TYPE&& req, Send&& send);
     };

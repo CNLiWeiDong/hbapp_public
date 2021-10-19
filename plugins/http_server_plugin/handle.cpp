@@ -26,21 +26,24 @@ namespace hb::http_server {
         boost::split(target_split, trim_target, boost::is_any_of("/_-"));
 
         vector<string> targets;
-        // target: a/b/c  拆分成"a","a-b","a-b-c"一共3个target, num是target的数量
+        // target: a/b/c  拆分成"a","a/b","a/b/c"一共3个target, num是target的数量
         for (int num=1; num<=target_split.size(); num++) {
             string t;
             for (int i=0; i<num; i++) {
-                t += target_split[i]+"-";
+                t += target_split[i]+"/";
             }
-            boost::trim_if(t,boost::is_any_of("-\t ")); 
+            boost::trim_if(t,boost::is_any_of("/\t ")); 
             targets.push_back(boost::to_lower_copy(t));
         }
         return targets;
     }
     template<class REQ_TYPE>
-    signal_results handle::deal_request(const REQ_TYPE &&req){
+    ptree handle::deal_request(const REQ_TYPE &&req){
         auto targets = split_target(req.target);
-        signal_results results;
+        ptree tmp_result;
+        stringstream stream(req.body());
+        read_json(stream,tmp_result);
+
         for(auto &target : targets) {
             shared_ptr<signal_type> sig;
             {
@@ -51,23 +54,17 @@ namespace hb::http_server {
                 }
             }
             if (sig && sig->num_slots()>0) {
-                auto one_result = sig(req.body());
-                results.insert(results.end(),one_result.begin(),one_result.end());
+                // tmp_result一开始是req.body, 每一层处理自行修改内容当作下一层处理参数
+                // a(tmp_result)的结果当成（a/b)的参数 （a/b)的结果当成(a/b/c)的参数
+                tmp_result = *(*sig)(tmp_result);   //sig() return a boost::optional containing the result returned by the last slot called.
             }
         }
-        return results;
+        return tmp_result;
     }
     
     template<class REQ_TYPE, class Send>
     void handle::request(const REQ_TYPE&& req, Send&& send) {
-        ptree pt_res;
-        pt_res.put("error","ok");
-        pt_res.put("type","string-array");
-        pt_res.put("target",req.target);
-        ptree results;
-        
-        auto const send_response = [&](unsigned status){
-            pt_res.put_child("results",results);
+        auto const send_response = [&](unsigned status, const ptree &pt_res){
             stringstream stream;
             write_json(stream,pt_res);
             http::response<http::string_body> res{status, req.version()};
@@ -79,19 +76,20 @@ namespace hb::http_server {
             send(std::move(res));
         };
         hb_try
-            auto deal_results = deal_request(req);
-            if(deal_results.size()==0){
-                pt_res.put("error","Target has no corresponding processing method!");
-                send_response(http::status::bad_request);
+            auto result = deal_request(req);
+            if(result.empty()){
+                ptree res;
+                res.put("error","Target has no corresponding processing method!");
+                res.put("target",req.target);
+                send_response(http::status::bad_request, res);
                 return;
             }
-            for(auto &item : deal_results){
-                results.push_back(std::make_pair("",item));
-            }
-            send_response(http::status::ok);
+            send_response(http::status::ok, result);
         hb_catch([&](const auto &e){
-            pt_res.put("error",log_throw("do handle_request work error", e));
-            send_response(http::status::internal_server_error);
+            ptree res;
+            res.put("error",log_throw("do handle_request work error", e));
+            res.put("target",req.target);
+            send_response(http::status::internal_server_error, res);
         })
     }
 }
