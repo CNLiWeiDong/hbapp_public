@@ -21,18 +21,17 @@ namespace hb::http_server {
         sig->connect(fun);
     }
     vector<string> handle::split_target(const string& target) {
-        string trim_target = boost::trim_copy_if(target,boost::is_any_of("/_-\t "));
+        string trim_target = boost::trim_copy_if(target,boost::is_any_of("/\t ")); // "/a/b/c 变成a/b/c"
         vector<string> target_split;
-        boost::split(target_split, trim_target, boost::is_any_of("/_-"));
+        boost::split(target_split, trim_target, boost::is_any_of("/")); // a,b,c
 
         vector<string> targets;
         // target: a/b/c  拆分成"a","a/b","a/b/c"一共3个target, num是target的数量
         for (int num=1; num<=target_split.size(); num++) {
             string t;
             for (int i=0; i<num; i++) {
-                t += target_split[i]+"/";
+                t += "/"+target_split[i]; // /a /a/b /a/b/c
             }
-            boost::trim_if(t,boost::is_any_of("/\t ")); 
             targets.push_back(boost::to_lower_copy(t));
         }
         return targets;
