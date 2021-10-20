@@ -4,7 +4,7 @@
 
 namespace hb::http_server { 
 
-     map<string, shared_ptr<signal_type>> registed_signals_;
+    map<string, shared_ptr<signal_type>> handle::registed_signals_;
     mutex handle::signals_mutex_;
 
     shared_ptr<signal_type> handle::regist(const string &target){
