@@ -57,9 +57,38 @@ namespace hb::http_server {
         static shared_ptr<signal_type> regist(const string &target);
         static void connect(const string &target, deal_fun fun);
         static vector<string> split_target(const string& target);
-        template<class REQ_TYPE>
-        static ptree deal_request(const REQ_TYPE &&req);
+        static ptree deal_request(const boost::beast::string_view &req_target, const boost::beast::string_view &req_body);
+
         template<class REQ_TYPE, class Send>
-        static void request(const REQ_TYPE&& req, Send&& send);
+        static void request(const REQ_TYPE&& req, Send&& send) {
+            auto const send_response = [&](http::status status, const ptree &pt_res){
+                stringstream stream;
+                write_json(stream,pt_res);
+                http::response<http::string_body> res{status, req.version()}; //
+                // http::response<http::string_body> res{http::status::bad_request, req.version()};
+                res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+                res.set(http::field::content_type, "application/text");
+                res.keep_alive(req.keep_alive());
+                res.body() = stream.str();
+                res.prepare_payload();
+                send(std::move(res));
+            };
+            hb_try
+                auto result = deal_request(req.target(), req.body());
+                if(result.empty()){
+                    ptree res;
+                    res.put("error","Target has no corresponding processing method!");
+                    res.put("target",req.target());
+                    send_response(http::status::bad_request, res);
+                    return;
+                }
+                send_response(http::status::ok, result);
+            hb_catch([&](const auto &e){
+                ptree res;
+                res.put("error",log_throw("do handle_request work error", e));
+                res.put("target",req.target());
+                send_response(http::status::internal_server_error, res);
+            })
+        }
     };
 }
