@@ -57,7 +57,7 @@ namespace hb::http_server {
         static shared_ptr<signal_type> regist(const string &target);
         static void connect(const string &target, deal_fun fun);
         static vector<string> split_target(const string& target);
-        static ptree deal_request(const boost::beast::string_view &req_target, const boost::beast::string_view &req_body);
+        static ptree deal_request(const string &req_target, const string &req_body);
 
         template<class REQ_TYPE, class Send>
         static void request(const REQ_TYPE&& req, Send&& send) {
@@ -73,20 +73,23 @@ namespace hb::http_server {
                 res.prepare_payload();
                 send(std::move(res));
             };
+            std::string req_target(req.target());
+            std::string req_body(req.body());
             hb_try
-                auto result = deal_request(req.target(), req.body());
+                auto result = deal_request(req_target, req_body);
                 if(result.empty()){
                     ptree res;
                     res.put("error","Target has no corresponding processing method!");
-                    res.put("target",req.target());
+                    res.put("target",req_target);
                     send_response(http::status::bad_request, res);
                     return;
                 }
+                result.put("target",req_target);
                 send_response(http::status::ok, result);
             hb_catch([&](const auto &e){
                 ptree res;
                 res.put("error",log_throw("do handle_request work error", e));
-                res.put("target",req.target());
+                res.put("target",req_target);
                 send_response(http::status::internal_server_error, res);
             })
         }

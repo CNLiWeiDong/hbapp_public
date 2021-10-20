@@ -37,10 +37,10 @@ namespace hb::http_server {
         return targets;
     }
 
-    ptree handle::deal_request(const boost::beast::string_view &req_target, const boost::beast::string_view &req_body){
-            auto targets = split_target(std::string(req_target.data(), req_target.size()));
+    ptree handle::deal_request(const string &req_target, const string &req_body){
+            auto targets = split_target(req_target);
             ptree tmp_result;
-            stringstream stream(std::string(req_body.data(), req_body.size()));
+            stringstream stream(req_body);
             read_json(stream,tmp_result);
 
             for(auto &target : targets) {
