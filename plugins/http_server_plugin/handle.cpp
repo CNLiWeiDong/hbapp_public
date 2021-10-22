@@ -38,12 +38,15 @@ namespace hb::http_server {
     }
 
     ptree handle::deal_request(const string &req_target, const string &req_body){
-            auto targets = split_target(req_target);
-            ptree tmp_result;
+            deal_request_data data;
             stringstream stream(req_body);
-            read_json(stream,tmp_result);
+            read_json(stream,data.req);
 
+            auto targets = split_target(req_target);
             for(auto &target : targets) {
+                if (data.status!=deal_status::ok) {
+                    break;
+                }
                 shared_ptr<signal_type> sig;
                 {
                     std::unique_lock<std::mutex> lock(signals_mutex_);
@@ -53,11 +56,13 @@ namespace hb::http_server {
                     }
                 }
                 if (sig && sig->num_slots()>0) {
-                    // tmp_result一开始是req.body, 每一层处理自行修改内容当作下一层处理参数
-                    // a(tmp_result)的结果当成（a/b)的参数 （a/b)的结果当成(a/b/c)的参数
-                    tmp_result = *(*sig)(tmp_result);   //sig() return a boost::optional containing the result returned by the last slot called.
+                    // data.result一开始是空, 每一层处理自行添加内容到result当作下一层处理参数
+                    // a(data)的结果当成（a/b)的参数 （a/b)的结果当成(a/b/c)的参数
+                    (*sig)(data);   //sig() return a boost::optional containing the result returned by the last slot called.
+                    data.deal_num++;
+                    data.deal_targets.push_back(target);
                 }
             }
-            return tmp_result;
+            return data.result;
         }
 }

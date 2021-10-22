@@ -33,8 +33,21 @@ namespace hb::http_server {
     using tcp = boost::asio::ip::tcp;       // from <boost/asio/ip/tcp.hpp>
     using namespace boost::property_tree;
 
-    // typedef vector<string> signal_results;
-    typedef function<ptree(const ptree &)> deal_fun;
+    enum class deal_status: unsigned {
+        ok = 0,
+        error = 1,
+        finished = 2,
+        stop = 3
+    };
+    struct deal_request_data {
+        ptree req;
+        ptree result;
+        unsigned deal_num = 0;
+        vector<string> deal_targets;
+        string deal_msg;
+        deal_status status = deal_status::ok;
+    };
+    typedef function<void(deal_request_data &)> deal_fun;
     // template <typename T> 
     // struct all_element 
     // { 
@@ -47,7 +60,7 @@ namespace hb::http_server {
     //     } 
     // };
     // typedef boost::signals2::signal<string(const string &), all_element<signal_results>> signal_type;
-    typedef boost::signals2::signal<ptree(const ptree &)> signal_type;
+    typedef boost::signals2::signal<void(deal_request_data &)> signal_type;
 
     class handle {
         public:
@@ -64,8 +77,7 @@ namespace hb::http_server {
             auto const send_response = [&](http::status status, const ptree &pt_res){
                 stringstream stream;
                 write_json(stream,pt_res);
-                http::response<http::string_body> res{status, req.version()}; //
-                // http::response<http::string_body> res{http::status::bad_request, req.version()};
+                http::response<http::string_body> res{status, req.version()}; 
                 res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
                 res.set(http::field::content_type, "application/text");
                 res.keep_alive(req.keep_alive());
@@ -78,10 +90,9 @@ namespace hb::http_server {
             hb_try
                 auto result = deal_request(req_target, req_body);
                 if(result.empty()){
-                    ptree res;
-                    res.put("error","Target has no corresponding processing method!");
-                    res.put("target",req_target);
-                    send_response(http::status::bad_request, res);
+                    result.put("error","Target has no corresponding processing method!");
+                    result.put("target",req_target);
+                    send_response(http::status::bad_request, result);
                     return;
                 }
                 result.put("target",req_target);

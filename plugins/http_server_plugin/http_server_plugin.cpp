@@ -11,7 +11,7 @@ namespace hb{ namespace plugin{
         }
         void http_server_plugin::set_program_options(options_description& cli, options_description& cfg) {
                 cfg.add_options()
-                        ("http-host", boost::program_options::value<string>()->default_value("127.0.0.1"), "the http server ip")
+                        ("http-host", boost::program_options::value<string>()->default_value("0.0.0.0"), "the http server ip")
                         ("http-port", boost::program_options::value<int>()->default_value(8888), "the http server port")
                         ("http-body-size", bpo::value<uint64_t>()->default_value(1024*1024), "The maximum body size in bytes allowed for incoming requests")
                         ("http-expires-seconds", bpo::value<uint32_t>()->default_value(30), "The connect keep live seconds time")
