@@ -38,8 +38,7 @@ namespace hb::http_server {
     }
 
     void handle::deal_request(deal_request_data &data){
-            string req_target = data.req.get<string>('target');
-
+            string req_target = data.req.get<string>("target");
             auto targets = split_target(req_target);
             for(auto &target : targets) {
                 if (data.status!=deal_status::ok) {

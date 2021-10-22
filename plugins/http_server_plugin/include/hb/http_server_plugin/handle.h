@@ -75,9 +75,18 @@ namespace hb::http_server {
 
         template<class REQ_TYPE, class Send>
         static void request(const REQ_TYPE&& req, Send&& send) {
-            auto const send_response = [&](http::status status, const ptree &pt_res){
+            
+            std::string req_target(req.target());
+            std::string req_body(req.body());
+            deal_request_data data;
+            stringstream stream(req_body);
+            read_json(stream, data.req);
+            data.req.put("target", req_target);
+            data.result.put("target", req_target);
+            data.result.put("error", ""); //默认没有错误 error不为空串时报错
+            auto const send_response = [&](http::status status){
                 stringstream stream;
-                write_json(stream,pt_res);
+                write_json(stream, data.result);
                 http::response<http::string_body> res{status, req.version()}; 
                 res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
                 res.set(http::field::content_type, "application/text");
@@ -86,28 +95,17 @@ namespace hb::http_server {
                 res.prepare_payload();
                 send(std::move(res));
             };
-            std::string req_target(req.target());
-            std::string req_body(req.body());
-            deal_request_data data;
-            stringstream stream(req_body);
-            read_json(stream, data.req);
-            data.req.put('target', req_target);
-
             hb_try
-                auto result = deal_request(data);
+                deal_request(data);
                 if(data.deal_num==0){
-                    result.put("error","Target has no corresponding processing method!");
-                    result.put("target",req_target);
-                    send_response(http::status::bad_request, result);
+                    data.result.put("error","Target has no corresponding processing method!");
+                    send_response(http::status::bad_request);
                     return;
                 }
-                result.put("target",req_target);
-                send_response(http::status::ok, result);
+                send_response(http::status::ok);
             hb_catch([&](const auto &e){
-                ptree res;
-                res.put("error",log_throw("do handle_request work error", e));
-                res.put("target",req_target);
-                send_response(http::status::internal_server_error, res);
+                data.result.put("error",log_throw("do handle_request work error", e));
+                send_response(http::status::internal_server_error);
             })
         }
     };
