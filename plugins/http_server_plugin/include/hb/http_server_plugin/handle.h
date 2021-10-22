@@ -48,6 +48,7 @@ namespace hb::http_server {
         deal_status status = deal_status::ok;
     };
     typedef function<void(deal_request_data &)> deal_fun;
+
     // template <typename T> 
     // struct all_element 
     // { 
@@ -70,7 +71,7 @@ namespace hb::http_server {
         static shared_ptr<signal_type> regist(const string &target);
         static void connect(const string &target, deal_fun fun);
         static vector<string> split_target(const string& target);
-        static ptree deal_request(const string &req_target, const string &req_body);
+        static void deal_request(deal_request_data &data);
 
         template<class REQ_TYPE, class Send>
         static void request(const REQ_TYPE&& req, Send&& send) {
@@ -87,9 +88,14 @@ namespace hb::http_server {
             };
             std::string req_target(req.target());
             std::string req_body(req.body());
+            deal_request_data data;
+            stringstream stream(req_body);
+            read_json(stream, data.req);
+            data.req.put('target', req_target);
+
             hb_try
-                auto result = deal_request(req_target, req_body);
-                if(result.empty()){
+                auto result = deal_request(data);
+                if(data.deal_num==0){
                     result.put("error","Target has no corresponding processing method!");
                     result.put("target",req_target);
                     send_response(http::status::bad_request, result);

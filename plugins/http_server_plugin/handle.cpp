@@ -37,10 +37,8 @@ namespace hb::http_server {
         return targets;
     }
 
-    ptree handle::deal_request(const string &req_target, const string &req_body){
-            deal_request_data data;
-            stringstream stream(req_body);
-            read_json(stream,data.req);
+    void handle::deal_request(deal_request_data &data){
+            string req_target = data.req.get<string>('target');
 
             auto targets = split_target(req_target);
             for(auto &target : targets) {
@@ -63,6 +61,5 @@ namespace hb::http_server {
                     data.deal_targets.push_back(target);
                 }
             }
-            return data.result;
         }
 }
