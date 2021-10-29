@@ -4,6 +4,7 @@
 namespace hb { namespace crypto {
     
     using namespace CryptoPP;
+    using namespace std;
 
     std::string pri_to_hex(const RSA::PrivateKey &key) {
         std::string strPri;
@@ -41,13 +42,6 @@ namespace hb { namespace crypto {
         
         strPri = pri_to_hex(privateKey);
         strPub = pub_to_hex(publicKey);
-        // HexEncoder privString(new StringSink(strPri));
-        // privateKey.DEREncode(privString);
-        // privString.MessageEnd();
-        
-        // HexEncoder pubString(new StringSink(strPub));
-        // publicKey.DEREncode(pubString);
-        // pubString.MessageEnd();
     }
 
     std::string rsa_encrypt(const std::string &strPub, const std::string &plainText)
@@ -75,11 +69,8 @@ namespace hb { namespace crypto {
     {
         AutoSeededRandomPool rng;
         RSA::PrivateKey privateKey = hex_to_pri(strPri);
-        // StringSource privString(strPri, true, new HexDecoder);
-        // RSA::PrivateKey privateKey;
-        // privateKey.Load(privString);
-        RSASSA_PKCS1v15_SHA_Signer signer(privateKey);	
-
+        RSASSA_PKCS1v15_SHA_Signer signer(privateKey);
+        	
         std::string signature;
         StringSource ss1(msg, true, 
             new SignerFilter(rng, signer,
@@ -91,12 +82,7 @@ namespace hb { namespace crypto {
 
     void verify_msg(const std::string& strPub, const std::string& msg, const std::string& sig) {
         RSA::PublicKey publicKey = hex_to_pub(strPub);
-        // StringSource pubString(strPub, true, new HexDecoder);
-        // RSA::PublicKey publicKey;
-        // publicKey.Load(pubString);
-        
         RSASSA_PKCS1v15_SHA_Verifier verifier(publicKey);
-
         StringSource ss2(msg+sig, true,
             new SignatureVerificationFilter(
                 verifier, NULL,
@@ -114,11 +100,26 @@ namespace hb { namespace crypto {
             PEM_Load(fs, key);
         return pri_to_hex(key);
     }
+    std::string pem_str_to_rsa_pri(const std::string &pem_str, const std::string &pass) {
+        StringSource ss(pem_str, true);
+        RSA::PrivateKey key;
+        if(pass.size()>0)
+            PEM_Load(ss, key, pass.data(), pass.size());
+        else
+            PEM_Load(ss, key);
+        return pri_to_hex(key);
+    }
     
     std::string read_rsa_pem_pub(const std::string &pem_path) {
         FileSource fs(pem_path.c_str(), true);
         RSA::PublicKey key;
         PEM_Load(fs, key);
+        return pub_to_hex(key);
+    }
+    std::string pem_str_to_rsa_pub(const std::string &pem_str) {
+        StringSource ss(pem_str, true);
+        RSA::PublicKey key;
+        PEM_Load(ss, key);
         return pub_to_hex(key);
     }
     
@@ -138,4 +139,42 @@ namespace hb { namespace crypto {
         FileSink fs(pem_path.c_str(), true);
         PEM_Save(fs, publicKey);
     }
+
+    string rsa_pub_to_pem_str(const std::string &strPub) {
+        RSA::PublicKey publicKey = hex_to_pub(strPub);
+        std::string pem_str;
+        StringSink sk(pem_str);
+        PEM_Save(sk, publicKey);
+        return pem_str;
+    }
+    string rsa_pub_to_pem_str(const RSA::PublicKey &publicKey) {
+        std::string pem_str;
+        StringSink sk(pem_str);
+        PEM_Save(sk, publicKey);
+        return pem_str;
+    }
+    string rsa_pri_to_pem_str(const std::string &strPri, const std::string &pass) {
+        RSA::PrivateKey privateKey = hex_to_pri(strPri);
+        std::string pem_str;
+        StringSink sk(pem_str);
+        if(pass.size()>0){
+            AutoSeededRandomPool rng;
+            PEM_Save(sk, privateKey, rng, "AES-128-CBC", pass.data(), pass.size());
+        }
+        else
+            PEM_Save(sk, privateKey);
+        return pem_str;
+    }
+    string rsa_pri_to_pem_str(const RSA::PrivateKey &privateKey, const std::string &pass) {
+        std::string pem_str;
+        StringSink sk(pem_str);
+        if(pass.size()>0){
+            AutoSeededRandomPool rng;
+            PEM_Save(sk, privateKey, rng, "AES-128-CBC", pass.data(), pass.size());
+        }
+        else
+            PEM_Save(sk, privateKey);
+        return pem_str;
+    }
+
 } } // namespace hb

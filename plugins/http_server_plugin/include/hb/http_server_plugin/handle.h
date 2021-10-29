@@ -84,6 +84,7 @@ namespace hb::http_server {
             data.req.put("target", req_target);
             data.result.put("target", req_target);
             data.result.put("error", ""); //默认没有错误 error不为空串时报错
+            data.result.put("code",0); //默认没有错误 code 为0表示操作成功
             auto const send_response = [&](http::status status){
                 stringstream stream;
                 write_json(stream, data.result);
@@ -99,12 +100,14 @@ namespace hb::http_server {
                 deal_request(data);
                 if(data.deal_num==0){
                     data.result.put("error","Target has no corresponding processing method!");
+                    data.result.put("code",400);
                     send_response(http::status::bad_request);
                     return;
                 }
                 send_response(http::status::ok);
             hb_catch([&](const auto &e){
                 data.result.put("error",log_throw("do handle_request work error", e));
+                data.result.put("code",500);
                 send_response(http::status::internal_server_error);
             })
         }

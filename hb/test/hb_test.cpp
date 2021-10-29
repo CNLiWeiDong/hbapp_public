@@ -181,6 +181,10 @@ BOOST_AUTO_TEST_CASE(test_pem) try {
 
   sava_rsa_pem_pub("test_rsa_pub.pem", strPub);
   BOOST_CHECK_EQUAL(read_rsa_pem_pub("test_rsa_pub.pem"), strPub);
+
+  BOOST_CHECK_EQUAL(pem_str_to_rsa_pri(rsa_pri_to_pem_str(strPri)), strPri);
+  BOOST_CHECK_EQUAL(pem_str_to_rsa_pub(rsa_pub_to_pem_str(strPub)), strPub);
+  
 } catch (...) {
   log_error<<"test_pem error!";
 };

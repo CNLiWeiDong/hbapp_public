@@ -41,9 +41,6 @@ namespace hb::http_server {
             string req_target = data.req.get<string>("target");
             auto targets = split_target(req_target);
             for(auto &target : targets) {
-                if (data.status!=deal_status::ok) {
-                    break;
-                }
                 shared_ptr<signal_type> sig;
                 {
                     std::unique_lock<std::mutex> lock(signals_mutex_);
@@ -58,6 +55,9 @@ namespace hb::http_server {
                     (*sig)(data);   //sig() return a boost::optional containing the result returned by the last slot called.
                     data.deal_num++;
                     data.deal_targets.push_back(target);
+                }
+                if (data.status!=deal_status::ok) {
+                    break;
                 }
             }
         }
