@@ -42,6 +42,7 @@ namespace hb::http_server {
     struct deal_request_data {
         ptree req;
         ptree result;
+        ptree temp_result;
         unsigned deal_num = 0;
         vector<string> deal_targets;
         string deal_msg;
