@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(mysql_plugin)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 
 file(GLOB HEADERS "include/hb/mysql_plugin/*.h"
         )

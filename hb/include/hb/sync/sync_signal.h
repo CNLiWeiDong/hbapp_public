@@ -59,11 +59,13 @@ public:
       FD_SET(_sign_read, &set); /* add our file descriptor to the set */
 
       rv = select(_sign_read + 1, &set, NULL, NULL, &timeout);
-      if (rv == -1)
+      if (rv == -1){
         hb_throw(hb_sync_exception().msg("sync_signal select read sign error!"));
+      }
       else if (rv == 0)
-        if (time_out_check)
+        if (time_out_check) {
           hb_throw(hb_sync_exception().msg("sync_signal read sign time out error!"));
+        }
         else
           continue;
       else
@@ -76,8 +78,8 @@ public:
 
 private:
   //防止复制
-  sync_signal(const signal &&c){};
-  sync_signal(const signal &c){};
+  sync_signal(const sync_signal &&c){};
+  sync_signal(const sync_signal &c){};
   void operator=(const sync_signal &c) {}
   void operator=(const sync_signal &&c) {}
 

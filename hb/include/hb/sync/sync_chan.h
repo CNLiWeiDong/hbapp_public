@@ -26,7 +26,7 @@ namespace hb { namespace sycn {
 template <typename CHAN_VALUE> 
 class sync_chan {
 public:
-  sync_chan(bool time_out = true) : time_out_check(time_out) {rji0r
+  sync_chan(bool time_out = true) : time_out_check(time_out) {
     if (::pipe(_pipe_sign) != 0)
         hb_throw(hb_sync_exception().msg("init sync_chan pipe sign error!"));
     ::fcntl(_pipe_sign[0], F_SETFL, O_NONBLOCK);
@@ -69,7 +69,7 @@ private:
     {
       std::unique_lock<std::mutex> lock(queue_mutex);
       if (chan_queue.size() == 0)
-        hb_throw(hb_sync_exception().msg("empty chan queue!"));
+        hb_throw(hb_sync_exception().msg("empty sync_chan queue!"));
       data = chan_queue.front();
       chan_queue.pop_front();
     }
@@ -88,11 +88,13 @@ private:
       FD_SET(_sign_read, &set); /* add our file descriptor to the set */
 
       rv = select(_sign_read + 1, &set, NULL, NULL, &timeout);
-      if (rv == -1)
+      if (rv == -1){
         hb_throw(hb_sync_exception().msg("sync_chan select read sign error!"));
+      }
       else if (rv == 0)
-        if (time_out_check)
+        if (time_out_check){
           hb_throw(hb_sync_exception().msg("sync_chan read sign time out error!"));
+        }
         else
           continue;
       else
@@ -105,10 +107,10 @@ private:
 
 private:
   //防止复制
-  chan(const chan &&c) = delete;
-  chan(const chan &c) = delete;
-  void operator=(const chan &c) = delete;
-  void operator=(const chan &&c) = delete;
+  sync_chan(const sync_chan &&c) = delete;
+  sync_chan(const sync_chan &c) = delete;
+  void operator=(const sync_chan &c) = delete;
+  void operator=(const sync_chan &&c) = delete;
 
 private:
   int _pipe_sign[2];

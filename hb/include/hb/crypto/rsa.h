@@ -18,9 +18,9 @@ namespace hb { namespace crypto {
     std::string read_rsa_pem_pub(const std::string &pem_path);
     std::string read_rsa_pem_pri(const std::string &pem_path, const std::string &pass = "");
     string rsa_pub_to_pem_str(const std::string &strPub);
-    string rsa_pub_to_pem_str(const RSA::PublicKey &publicKey);
+    string rsa_pub_to_pem_str(const CryptoPP::RSA::PublicKey &publicKey);
     string rsa_pri_to_pem_str(const std::string &strPri, const std::string &pass = "");
-    string rsa_pri_to_pem_str(const RSA::PrivateKey &privateKey, const std::string &pass = "");
+    string rsa_pri_to_pem_str(const CryptoPP::RSA::PrivateKey &privateKey, const std::string &pass = "");
     std::string pem_str_to_rsa_pri(const std::string &pem_str, const std::string &pass = "");
     std::string pem_str_to_rsa_pub(const std::string &pem_str);
 } } // namespace hb
