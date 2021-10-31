@@ -24,6 +24,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/signals2/signal.hpp>
+#include <boost/algorithm/algorithm.hpp>
 
 namespace hb::http_server {
     namespace beast = boost::beast;         // from <boost/beast.hpp>
@@ -78,6 +79,8 @@ namespace hb::http_server {
         static void request(const REQ_TYPE&& req, Send&& send) {
             
             std::string req_target(req.target());
+            boost::to_lower(req_target);
+            log_info<<"request target "<<req_target;
             std::string req_body(req.body());
             deal_request_data data;
             stringstream stream(req_body);
