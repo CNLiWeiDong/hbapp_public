@@ -5,6 +5,7 @@
 #include "hb/crypto/md5.h"
 #include "hb/crypto/rsa.h"
 #include "hb/crypto/sha.h"
+#include "hb/crypto/random.h"
 #include "hb/error/exception.h"
 #include "hb/http/http.h"
 #include "hb/https/https.h"

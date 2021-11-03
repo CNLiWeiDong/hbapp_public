@@ -63,6 +63,7 @@ find_package(Boost 1.60 REQUIRED COMPONENTS
         chrono
         unit_test_framework
         iostreams
+        random
         )
 add_definitions(-DBOOST_ASIO_DISABLE_STD_EXPERIMENTAL_STRING_VIEW)
 message(STATUS "Boost_LIBRARIES:${Boost_LIBRARIES}")

@@ -77,42 +77,52 @@ namespace hb::http_server {
 
         template<class REQ_TYPE, class Send>
         static void request(const REQ_TYPE&& req, Send&& send) {
-            
-            std::string req_target(req.target());
-            boost::to_lower(req_target);
-            log_info<<"request target "<<req_target;
-            std::string req_body(req.body());
-            deal_request_data data;
-            stringstream stream(req_body);
-            read_json(stream, data.req);
-            data.req.put("target", req_target);
-            data.result.put("target", req_target);
-            data.result.put("error", ""); //默认没有错误 error不为空串时报错
-            data.result.put("code",0); //默认没有错误 code 为0表示操作成功
-            auto const send_response = [&](http::status status){
-                stringstream stream;
-                write_json(stream, data.result);
-                http::response<http::string_body> res{status, req.version()}; 
+            hb_try
+                std::string req_target(req.target());
+                boost::to_lower(req_target);
+                log_info<<"request target "<<req_target;
+                std::string req_body(req.body());
+                deal_request_data data;
+                stringstream stream(req_body);
+                read_json(stream, data.req);
+                data.req.put("target", req_target);
+                data.result.put("target", req_target);
+                data.result.put("error", ""); //默认没有错误 error不为空串时报错
+                data.result.put("code",0); //默认没有错误 code 为0表示操作成功
+                auto const send_response = [&](http::status status){
+                    stringstream stream;
+                    write_json(stream, data.result);
+                    http::response<http::string_body> res{status, req.version()}; 
+                    res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
+                    res.set(http::field::content_type, "application/text");
+                    res.keep_alive(req.keep_alive());
+                    res.body() = stream.str();
+                    res.prepare_payload();
+                    send(std::move(res));
+                };
+                hb_try
+                    deal_request(data);
+                    if(data.deal_num==0){
+                        data.result.put("error","Target has no corresponding processing method!");
+                        data.result.put("code",400);
+                        send_response(http::status::bad_request);
+                        return;
+                    }
+                    send_response(http::status::ok);
+                hb_catch([&](const auto &e){
+                    data.result.put("error",log_throw("do handle_request work error", e));
+                    data.result.put("code",500);
+                    send_response(http::status::internal_server_error);
+                })
+            hb_catch([&](const auto &e){
+                string error_str = log_throw("handle request error:", e);
+                http::response<http::string_body> res; 
                 res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
                 res.set(http::field::content_type, "application/text");
                 res.keep_alive(req.keep_alive());
-                res.body() = stream.str();
+                res.body() = error_str;
                 res.prepare_payload();
                 send(std::move(res));
-            };
-            hb_try
-                deal_request(data);
-                if(data.deal_num==0){
-                    data.result.put("error","Target has no corresponding processing method!");
-                    data.result.put("code",400);
-                    send_response(http::status::bad_request);
-                    return;
-                }
-                send_response(http::status::ok);
-            hb_catch([&](const auto &e){
-                data.result.put("error",log_throw("do handle_request work error", e));
-                data.result.put("code",500);
-                send_response(http::status::internal_server_error);
             })
         }
     };
