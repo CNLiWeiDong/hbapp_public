@@ -36,6 +36,7 @@ namespace hb {  namespace http {
             res_body_ = log_throw("http request error.", e);
             return 500;
         })
+        return 0;
     }
     int http::get()
     {

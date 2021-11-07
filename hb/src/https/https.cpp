@@ -1,5 +1,5 @@
 #include <hb/https/https.h>
-#include <hb/https/https_error.h>>
+#include <hb/https/https_error.h>
 
 namespace hb::https {
     void https::load_certificates()
@@ -70,6 +70,7 @@ namespace hb::https {
             res_body_ = log_throw("do https request error", e);
             return 500;
         })
+        return 0;
     }
     int https::get()
     {

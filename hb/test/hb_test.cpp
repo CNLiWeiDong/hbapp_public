@@ -134,6 +134,7 @@ BOOST_AUTO_TEST_CASE(test_md5) try {
       "789012345678901234567890123456789012345678901234567890123456789012345678"
       "901234567890");
   auto md5_str1 = md5(source_str1);
+  log_info<<"md5 sum:==========="<<hex(md5_str1);
   auto md5_str2 = md5(source_str2);
   BOOST_CHECK_EQUAL(true, md5_str1 != md5_str2);
 } catch (...) {
@@ -168,7 +169,7 @@ BOOST_AUTO_TEST_CASE(test_rsa) try {
   std::string sig = sign_msg(strPri, "test");
   log_info<<"sig:===========";
   log_info<<base64(sig);
-  verify_msg(strPub, "tes", sig);
+  verify_msg(strPub, "test", sig);
 
 } catch (...) {
   log_error<<"test_rsa error!";
@@ -201,6 +202,60 @@ sdOATUn7xMBKXaXLjs4ZbUzdh9Wl8+HlWwnx1wRp0VgUMbJowqSrD6FN)");
   log_error<<"test_rsa_verify_pub error!";
 };
 
+// test_rsa_verify_sign_game_client
+BOOST_AUTO_TEST_CASE(test_rsa_verify_sign_game_client) try {
+  std::string strPub = pem_str_to_rsa_pub(R"(-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCaWq5LDl5LhRVJVXL+sXDKaWMP
+1jWa5SF/IhJgnayknrel+ArhahDUGOPV6l+WhpjIsNuvbLxwSOEFDqBZRFz+zbTZ
+g6oxYe17lbxSJu3hZqmz58EuTCkgAL8DEmKIKUyvgdG16GoCLgMtd2GekcfQ2+Z4
+LUA7iD8bbGW4q+bvZwIDAQAB
+-----END PUBLIC KEY-----)");
+
+  std::string sig = base64_to_str(R"(KW6M4jqPpeSwmaBkL26ZIZklwjLp/NIasafn675EPX/w1p1L2VsgPixf+UjFcfBOMqxe8w3dzww1fTxbMNLUDY5fTRLO4u7HU0nqNTTCi4BQdH/GZ/c/kEInK6C0g8tcn0EX9NoUpqdNPzA6/lKDwK4xhJbvhL2s+ebzuLiYzXQ=)");
+  verify_msg(strPub, "1234567890", sig);
+  log_error<<"test_rsa_verify_sign_game_client success!";
+
+} catch (...) {
+  log_error<<"test_rsa_verify_sign_game_client error!";
+};
+
+// test_rsa_verify_keys
+BOOST_AUTO_TEST_CASE(test_rsa_verify_keys) try {
+  std::string strPub = pem_str_to_rsa_pub(R"(-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCaWq5LDl5LhRVJVXL+sXDKaWMP
+1jWa5SF/IhJgnayknrel+ArhahDUGOPV6l+WhpjIsNuvbLxwSOEFDqBZRFz+zbTZ
+g6oxYe17lbxSJu3hZqmz58EuTCkgAL8DEmKIKUyvgdG16GoCLgMtd2GekcfQ2+Z4
+LUA7iD8bbGW4q+bvZwIDAQAB
+-----END PUBLIC KEY-----)");
+
+  std::string strPri = pem_str_to_rsa_pri(R"(-----BEGIN PRIVATE KEY-----
+MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAJparksOXkuFFUlV
+cv6xcMppYw/WNZrlIX8iEmCdrKSet6X4CuFqENQY49XqX5aGmMiw269svHBI4QUO
+oFlEXP7NtNmDqjFh7XuVvFIm7eFmqbPnwS5MKSAAvwMSYogpTK+B0bXoagIuAy13
+YZ6Rx9Db5ngtQDuIPxtsZbir5u9nAgMBAAECgYAc5W8NtBHpF3AFu458qeFQs2wN
+Me/1IIIl184S8lG4u9Hrq0T2MDIYUtSMXoUom+gMYjeuXq/kYXBmzvcr3wV9j0MK
+EMe2uI7FENnQWfh5xazHzvlj+vTEBumNn8iM0SXhb/Yogp4Z8UueOArA8GFVcEYX
+Pa8YXm9J3DkSdoFTCQJBALF+VhWDj9qDLnonr+Si1de4gLkU3s/8sAiCKRVdDJuu
+VOOuIP67EgRjoj2hTplBhS0hB89cMEzGoEAt53BEveUCQQDeoEY24e5UXiT4YgJ5
+hyoPi9MkofD06D+8Mf1+nS8Q8/QLtnHdAVMerY4HVyvJfOOXqXfiETzW8oSSi1lO
+asNbAkB2BldByREQMWjna5qHw0vFPXfDGsCqtxFrJvogrZYjs4HZQEHKgSSS7JnG
+t4unVy0yfCNQXLH1a6LF6oBaZCuNAkAoqxaoh/VFrD0MsrrJAIwKcvyLQJoH4zVh
+Z7BrJMOoUShPy3BZcxiADixX4vC4yfu5hNfFkGiQy5S0QIh77rzpAkB8hvH2X9FT
+NQ7ozV/0f5ldg+T1m983i7L/IySmQaWhmeQWpMmlCYbQZZSd/A1LWY+krwJa8AFG
+BC9Eub2fXHis
+-----END PRIVATE KEY-----)");
+
+  std::string chiper = rsa_encrypt(strPub, "test");
+  BOOST_CHECK_EQUAL(rsa_decrypt(strPri,chiper), "test");
+  std::string sig = sign_msg(strPri, "test");
+  log_info<<"sig22222222:===========";
+  log_info<<base64(sig);
+  verify_msg(strPub, "test", sig);
+  log_info<<"test_rsa_verify_keys success!";
+
+} catch (...) {
+  log_error<<"test_rsa_verify_keys error!";
+};
 // test_pem
 BOOST_AUTO_TEST_CASE(test_pem) try {
   std::string strPri, strPub;

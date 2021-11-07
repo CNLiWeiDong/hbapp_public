@@ -5,7 +5,7 @@
 #include <boost/exception/all.hpp>
 #include <boost/core/demangle.hpp>
 #include <boost/format.hpp>
-#include <hb/name/name.h>>
+#include <hb/name/name.h>
 
 // #ifndef BOOST_ENABLE_ASSERT_DEBUG_HANDLER
 // #define BOOST_ENABLE_ASSERT_DEBUG_HANDLER
@@ -36,8 +36,8 @@ namespace hb::error {
     { 
     public:
         hb_exception():
-                code_(code_num), 
-                name_(boost::core::demangle(typeid(Impl).name())) 
+                name_(boost::core::demangle(typeid(Impl).name())),
+                code_(code_num)
         { }
     
         virtual const char *what() const throw() 

@@ -36,7 +36,7 @@ namespace hb::name {
       return name;
    }
 
-   static string name_to_string(uint64_t value) {
+   __attribute__((unused)) static string name_to_string(uint64_t value) {
      static const char* charmap = ".12345abcdefghijklmnopqrstuvwxyz";
       string str(13,'.');
       uint64_t tmp = value;
