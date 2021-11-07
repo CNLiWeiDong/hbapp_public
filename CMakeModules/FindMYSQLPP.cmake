@@ -15,7 +15,7 @@ find_path(MYSQLPP_INCLUDE_DIR
         )
 # 查找库文件位置
 find_library(MYSQLPP_LIBRARY
-        NAMES mysqlpp libmysqlpp.a
+        NAMES libmysqlpp.a
         PATHS /usr/local/opt/mysql++/lib /usr/opt/mysql++/lib
         DOC "MYSQLPP library"
         )
