@@ -80,11 +80,9 @@ namespace hb::http_server {
             hb_try
                 std::string req_target(req.target());
                 boost::to_lower(req_target);
-                log_info<<"request target "<<req_target;
-                std::string req_body(req.body());
+                log_info<<"request target: "<<req_target;
+                
                 deal_request_data data;
-                stringstream stream(req_body);
-                read_json(stream, data.req);
                 data.req.put("target", req_target);
                 data.result.put("target", req_target);
                 data.result.put("error", ""); //默认没有错误 error不为空串时报错
@@ -100,6 +98,22 @@ namespace hb::http_server {
                     res.prepare_payload();
                     send(std::move(res));
                 };
+
+                hb_try
+                    std::string req_body(req.body());
+                    if (req_body=="") {
+                        req_body = "{}";
+                    }
+                    stringstream stream(req_body);
+                    read_json(stream, data.req);
+                hb_catch([&](const auto &e){
+                    log_throw("do parse request error", e);
+                    data.result.put("error","do parse request error");
+                    data.result.put("code",500);
+                    send_response(http::status::internal_server_error);
+                    return;
+                })
+                
                 hb_try
                     deal_request(data);
                     if(data.deal_num==0){
