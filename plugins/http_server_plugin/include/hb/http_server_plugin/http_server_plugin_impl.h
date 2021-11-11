@@ -21,11 +21,11 @@ namespace hb{ namespace plugin {
     using namespace hb::http_server;
     
     struct http_options {
-        bool https_enable;
+        bool https_enable = false;
         string host;
-        int port;
-        uint64_t body_size;
-        uint32_t expires_seonds;
+        int port = 0;
+        uint64_t body_size = 0;
+        uint32_t expires_seonds = 0;
         string dhparam_file;
         string certificate_file;
         string private_file;

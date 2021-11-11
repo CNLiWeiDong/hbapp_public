@@ -189,14 +189,15 @@ E2x7EFacmI7YZqzlfbICoogrHnQ6X4WEAlOwLNm2FP3F5SV98mILlCw9LU5CdjHq
 V2jaAfCYkdgb3BgiDisbKSRhodOs9fCljqIBpDa1WCIdAgER
 -----END PUBLIC KEY-----)");
 
-  std::string sig = base64_to_str(R"(OY+qBys5YumiZxOCKIysHhIEuDz6JcUi7xU0HPnH3LEZ2UvX9sHGeB/wQycYfFDTfu3YiZpwcKq/
-/+3mylsZLICQ+saFbjWTIQ/15tCnhwbcKvh+/2SqAT5jE0DshO+AIWS33seA3tr5ZEjN71DcePva
-C90xjDvI3VwYnCpDnRc1sPztrgj/g7gzoHo+rYeAV0W+qaF9JpKKzt3+H127d9J3g+ew2kqeB05b
-zHqX+YGep6ZEwoTbh7wIZK7CewuoT32GX9i7EVroqqfiEDlw1IhHqa1lCX1tWFIhYCgG/roYqRCp
-JG0s2eWCJ9YaPFHbxhKrP+7a6zQ0RmZTkOSYfYOCog1PK93RGmDjeMmcH0sI1V5VDXXKGzlUmQS4
-bXYfXDr7J84iHfVZVXyTVEP0JBEsZj8X9fJLyk5XnKtWR1iTOnKIVC+s6NsamI4QK9RjEkaAGEUk
-sdOATUn7xMBKXaXLjs4ZbUzdh9Wl8+HlWwnx1wRp0VgUMbJowqSrD6FN)");
-  verify_msg(strPub, "test", sig);
+  std::string sig = base64_to_str(R"(IaiywKnQJ/DFXQ2DAll6gq1ydSZYWJIBaZWbM6jWOSC2yyZh0pgx6WaAcGTTccsbb/NEs6mgBWeB
+l6565uAgWVJJB+1aE+0iXUAuNCj41kgEAW0RCeb2JDzz1qJYgpUVwPAcsXOh+zNT0lKZ5bRskxGl
+Isydq7zANc7h4knOlnTschFyt7q6PliBjfFYz1NsQqemkECcPmBzCMdLUkfwgbNB9IjB2MBhbDJr
+GwDUnheAtr+fVwePeeS03dzzO39MLena3WVr4/YABOP3zRhc6oagDm/9BxHZNCy7+NZLB1I3YyAy
+Qu6GicksruZ9OJyMC0JBMwii+j4va6cwyu7jJK+VGzZbdhyhk72Y3JXKPpej3AzoAJ2VWhaUZtEP
+6S6XSnz4aBF3JeHCax7SCudYi/6MMgRYGSheVd6T5u7JxsaJy0aRbp2iTlEcsk2CZl6M0WHJOCwi
+KV44gNpFTTkArdddFTONKSuniqmWzDM7cPFkEemIoomhG8hnc26C/IPJ)");
+  verify_msg(strPub, "/block/query/userblock1636473734", sig);
+  log_info<<"test_rsa_verify_pub success!";
 
 } catch (...) {
   log_error<<"test_rsa_verify_pub error!";

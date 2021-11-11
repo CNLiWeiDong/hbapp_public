@@ -42,6 +42,7 @@ namespace hb::http_server {
     };
     struct deal_request_data {
         ptree req;
+        string req_str;
         ptree result;
         ptree temp_result;
         unsigned deal_num = 0;
@@ -80,10 +81,11 @@ namespace hb::http_server {
             hb_try
                 std::string req_target(req.target());
                 boost::to_lower(req_target);
+                std::string req_body(req.body());
                 log_info<<"request target: "<<req_target;
-                
+                log_debug<<"request body: "<<req_body;
                 deal_request_data data;
-                data.req.put("target", req_target);
+                data.req_str = req_body;
                 data.result.put("target", req_target);
                 data.result.put("error", ""); //默认没有错误 error不为空串时报错
                 data.result.put("code",0); //默认没有错误 code 为0表示操作成功
@@ -99,20 +101,19 @@ namespace hb::http_server {
                     send(std::move(res));
                 };
 
-                hb_try
-                    std::string req_body(req.body());
+                try{
                     if (req_body=="") {
                         req_body = "{}";
                     }
                     stringstream stream(req_body);
                     read_json(stream, data.req);
-                hb_catch([&](const auto &e){
-                    log_throw("do parse request error", e);
+                    data.req.put("target", req_target);
+                } catch(...) {
                     data.result.put("error","do parse request error");
                     data.result.put("code",500);
                     send_response(http::status::internal_server_error);
                     return;
-                })
+                }
                 
                 hb_try
                     deal_request(data);
@@ -128,7 +129,7 @@ namespace hb::http_server {
                     data.result.put("code",500);
                     send_response(http::status::internal_server_error);
                 })
-            hb_catch([&](const auto &e){
+            hb_catch([&](const auto &e) noexcept {
                 string error_str = log_throw("handle request error:", e);
                 http::response<http::string_body> res; 
                 res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
