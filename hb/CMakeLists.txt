@@ -3,6 +3,7 @@ project(hb)
 
 set(hb_sources
         src/zip/zlib.cpp
+        src/util/util.cpp
         src/log/log.cpp
         src/error/exception.cpp
         src/http/http.cpp

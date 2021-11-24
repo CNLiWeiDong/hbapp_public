@@ -16,3 +16,4 @@
 #include "hb/time/time.h"
 #include "hb/types/types.h"
 #include "hb/zip/zlib.h"
+#include "hb/util/util.h"

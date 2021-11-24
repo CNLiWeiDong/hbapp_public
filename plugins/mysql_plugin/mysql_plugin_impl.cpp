@@ -33,8 +33,8 @@ namespace hb { namespace plugin {
                     }
                 }
             }while(0);
-            if(con_ptr && con_ptr->status()){
-                con_ptr->thread_start();
+            if(con_ptr && con_ptr->ping()){
+                // con_ptr->thread_start();
                 con_ptr->open();
                 return con_ptr;
             }
@@ -60,7 +60,7 @@ namespace hb { namespace plugin {
                 if(pools.size()<pool_max_size_){
                     con->stop();
                     pools.push_back(con);
-                    con->thread_end();
+                    // con->thread_end();
                 }
 
             }while(0);

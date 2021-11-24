@@ -16,7 +16,7 @@ namespace hb{ namespace plugin{
 
         void thread_pool_plugin::set_program_options(options_description& cli, options_description& cfg) {
                 cfg.add_options()
-                        ("thread-pool-count", bpo::value<int>()->default_value(24),
+                        ("thread-pool-count", bpo::value<int>()->default_value(32),
                          "threads num in thread pool.");
         }
         void thread_pool_plugin::plugin_initialize(const variables_map& options) {
