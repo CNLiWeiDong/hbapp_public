@@ -7,5 +7,6 @@ namespace hb::util {
     vector<string> split(const string &str, const string &chars) {
         vector<string> arr;
         boost::split(arr, str, boost::is_any_of(chars.c_str()));
+        return arr;
     }
 } // namespace hb

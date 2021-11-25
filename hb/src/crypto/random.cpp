@@ -23,9 +23,11 @@ namespace hb { namespace crypto {
         }
         return digest;
     }
-    unsigned random_num(unsigned max){
+    unsigned random_num(unsigned limit_max){
+        if (limit_max<=1) return 0;
         boost::random::random_device rng;
-        boost::random::uniform_int_distribution<> index_dist(0, max);
+        boost::random::uniform_int_distribution<> index_dist(0, limit_max-1);
+        return index_dist(rng);
     }
 
 } } // namespace hb
