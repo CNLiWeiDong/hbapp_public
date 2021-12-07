@@ -96,7 +96,7 @@ namespace hb::http_server {
                     res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
                     res.set(http::field::content_type, "application/text");
                     res.keep_alive(req.keep_alive());
-                    log_debug<<"======【response body】======\n"<<stream.str();
+                    log_debug<<"======【response body】======\n"<<boost::replace_all_copy(stream.str(), "\n","");
                     res.body() = stream.str();
                     res.prepare_payload();
                     send(std::move(res));
