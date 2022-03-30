@@ -29,6 +29,8 @@ namespace hb{ namespace time{
         int week = tw.date().day_of_week().as_number(); //.as_short_string()
         return week;
     }
+    // sprintf(szLine, "%04d-%02d-%02d %02d:%02d:%02d:%03d", td.year(), td.month(), td.day().as_number(), tt.hours(), tt.minutes(), tt.seconds(), ssss.total_microseconds() % 1000);
+    // 所以minutes,seconds 不会超过60的
     inline int day_of_month()
     {
         boost::posix_time::ptime tw(boost::posix_time::second_clock::local_time());

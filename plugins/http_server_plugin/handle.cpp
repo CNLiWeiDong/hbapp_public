@@ -38,27 +38,28 @@ namespace hb::http_server {
     }
 
     void handle::deal_request(deal_request_data &data){
-            string req_target = data.req.get<string>("target");
-            auto targets = split_target(req_target);
-            for(auto &target : targets) {
-                shared_ptr<signal_type> sig;
-                {
-                    std::unique_lock<std::mutex> lock(signals_mutex_);
-                    decltype(registed_signals_.end()) it = registed_signals_.find(target);
-                    if(it != registed_signals_.end()){
-                        sig = it->second;
-                    }
-                }
-                if (sig && sig->num_slots()>0) {
-                    // data.result一开始是空, 每一层处理自行添加内容到result当作下一层处理参数
-                    // a(data)的结果当成（a/b)的参数 （a/b)的结果当成(a/b/c)的参数
-                    (*sig)(data);   //sig() return a boost::optional containing the result returned by the last slot called.
-                    data.deal_num++;
-                    data.deal_targets.push_back(target);
-                }
-                if (data.status!=deal_status::ok) {
-                    break;
+        string req_target = data.req.get<string>("target");
+        auto targets = split_target(req_target);
+        for(auto &target : targets) {
+            shared_ptr<signal_type> sig;
+            {
+                std::unique_lock<std::mutex> lock(signals_mutex_);
+                decltype(registed_signals_.end()) it = registed_signals_.find(target);
+                if(it != registed_signals_.end()){
+                    sig = it->second;
                 }
             }
+            if (sig && sig->num_slots()>0) {
+                // data.result一开始是空, 每一层处理自行添加内容到result当作下一层处理参数
+                // a(data)的结果当成（a/b)的参数 （a/b)的结果当成(a/b/c)的参数
+                (*sig)(data);   //sig() return a boost::optional containing the result returned by the last slot called.
+                data.deal_num++;
+                data.deal_targets.push_back(target);
+            }
+            if (data.status!=deal_status::ok) {
+                break;
+            }
         }
+        log_debug<<"deal_request end! deal_num:"<<data.deal_num <<" data.status:"<<(unsigned)data.status;
+    }
 }

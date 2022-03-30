@@ -91,12 +91,15 @@ namespace hb::http_server {
                 data.result.put("code",0); //默认没有错误 code 为0表示操作成功
                 auto const send_response = [&](http::status status){
                     stringstream stream;
-                    write_json(stream, data.result);
+                    write_json(stream, data.result, false);
                     http::response<http::string_body> res{status, req.version()}; 
                     res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
                     res.set(http::field::content_type, "application/text");
                     res.keep_alive(req.keep_alive());
-                    log_debug<<"======【response body】======\n"<<boost::replace_all_copy(stream.str(), "\n","");
+                    log_debug<<"======【response body】======\n"<<stream.str();
+                    if (data.result.get("code",0)!=0) {
+                        log_warn<<"======【response body】======\n"<<stream.str();
+                    }
                     res.body() = stream.str();
                     res.prepare_payload();
                     send(std::move(res));
