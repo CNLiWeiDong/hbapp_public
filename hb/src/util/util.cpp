@@ -1,8 +1,9 @@
 #include <hb/util/util.h>
+
 #include <boost/algorithm/algorithm.hpp>
 #include <boost/algorithm/string.hpp>
 
-namespace hb::util {  
+namespace hb::util {
 
     vector<string> split(const string &str, const string &chars) {
         vector<string> arr;
@@ -17,4 +18,4 @@ namespace hb::util {
         }
         return res;
     }
-} // namespace hb
+}  // namespace hb::util

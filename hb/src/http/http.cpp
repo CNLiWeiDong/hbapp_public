@@ -1,13 +1,13 @@
-#include <hb/http/http.h>
 #include <hb/error/exception.h>
+#include <hb/http/http.h>
 
-namespace hb {  namespace http {
-    
-    int http::request()
-    {
-        hb_try
-            // The io_context is required for all I/O
-            net::io_context ioc;
+namespace hb {
+    namespace http {
+
+        int http::request() {
+            hb_try
+                // The io_context is required for all I/O
+                net::io_context ioc;
             // These objects perform our I/O
             tcp::resolver resolver(ioc);
             beast::tcp_stream stream(ioc);
@@ -32,36 +32,38 @@ namespace hb {  namespace http {
             // if(ec && ec != beast::errc::not_connected)
             //     throw beast::system_error{ec};
             return 200;
-        hb_catch([&](const auto &e){
-            res_body_ = log_throw("http request error.", e);
-            return 500;
-        })
-        return 0;
-    }
-    int http::get()
-    {
-        req_.method(beast::http::verb::get);
-        return request();
-    }
-    int http::post()
-    {
-        req_.method(beast::http::verb::post); //http::request<http::string_body> req{http::verb::post, target, 10}; target() version()
-        req_.set(beast::http::field::content_length, boost::lexical_cast<std::string>(req_body_.size()));
-        req_.set(beast::http::field::body, req_body_);
-        return request();
-    }
-    void http::post(net::io_context& ioc, const response_fun_type &callback) {
-        req_.method(beast::http::verb::post);
-        req_.set(beast::http::field::content_length, boost::lexical_cast<std::string>(req_body_.size()));
-        req_.set(beast::http::field::body, req_body_);
-        req_.prepare_payload();
-        
-        auto sess = std::make_shared<session>(ioc, req_, callback);
-        sess->request(host_, port_); 
-    }
-    void http::get(net::io_context& ioc, const response_fun_type &callback) {
-        req_.method(beast::http::verb::get);
-        auto sess = std::make_shared<session>(ioc, req_, callback);
-        sess->request(host_, port_); 
-    }
-} }
+            hb_catch([&](const auto &e) {
+                res_body_ = log_throw("http request error.", e);
+                return 500;
+            }) return 0;
+        }
+        int http::get() {
+            req_.method(beast::http::verb::get);
+            return request();
+        }
+        int http::post() {
+            req_.method(
+                beast::http::verb::post);  // http::request<http::string_body> req{http::verb::post,
+                                           // target, 10}; target() version()
+            req_.set(beast::http::field::content_length,
+                     boost::lexical_cast<std::string>(req_body_.size()));
+            req_.set(beast::http::field::body, req_body_);
+            return request();
+        }
+        void http::post(net::io_context &ioc, const response_fun_type &callback) {
+            req_.method(beast::http::verb::post);
+            req_.set(beast::http::field::content_length,
+                     boost::lexical_cast<std::string>(req_body_.size()));
+            req_.set(beast::http::field::body, req_body_);
+            req_.prepare_payload();
+
+            auto sess = std::make_shared<session>(ioc, req_, callback);
+            sess->request(host_, port_);
+        }
+        void http::get(net::io_context &ioc, const response_fun_type &callback) {
+            req_.method(beast::http::verb::get);
+            auto sess = std::make_shared<session>(ioc, req_, callback);
+            sess->request(host_, port_);
+        }
+    }  // namespace http
+}  // namespace hb

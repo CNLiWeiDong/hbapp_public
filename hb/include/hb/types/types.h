@@ -4,13 +4,13 @@
 #include <string>
 #include <vector>
 
+namespace hb {
+    namespace type {
 
+        using namespace std;
 
-namespace hb { namespace type {
-    
-using namespace std;
+        typedef boost::multiprecision::uint128_t uint128_t;
+        using bytes = vector<char>;
 
-typedef boost::multiprecision::uint128_t uint128_t;
-using bytes = vector<char>;
-
-} }// namespace hb
+    }  // namespace type
+}  // namespace hb

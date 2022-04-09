@@ -21,7 +21,8 @@ else()
     set( ZLIB_LIBRARIES "" )
 endif( ZLIB_FOUND )
 
-#openssl
+#openssl 
+set(OPENSSL_ROOT_DIR) # 扩大变量作用域
 if ("${OPENSSL_ROOT_DIR}" STREQUAL "")
     if (NOT "$ENV{OPENSSL_ROOT_DIR}" STREQUAL "")
         set(OPENSSL_ROOT_DIR $ENV{OPENSSL_ROOT_DIR})
@@ -29,7 +30,7 @@ if ("${OPENSSL_ROOT_DIR}" STREQUAL "")
     elseif (APPLE)
         set(OPENSSL_ROOT_DIR "/usr/local/opt/openssl")
         set(OPENSSL_INCLUDE_DIR "/usr/local/opt/openssl/include")
-    elseif(UNIX AND NOT APPLE)
+    elseif(NOT APPLE)
         set(OPENSSL_ROOT_DIR "/usr/include/openssl")
         set(OPENSSL_INCLUDE_DIR "/usr/include/openssl/include")
     else()

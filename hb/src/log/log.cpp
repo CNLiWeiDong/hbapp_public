@@ -1,7 +1,8 @@
-#include <hb/log/log.h>
 #include <hb/error/exception.h>
-#include <fstream>
+#include <hb/log/log.h>
 #include <stdlib.h>
+
+#include <fstream>
 #include <string>
 
 const char* default_cfg_info = R"(
@@ -50,32 +51,32 @@ Asynchronous=false
 AutoFlush=true
 )";
 
-namespace hb { namespace log {
-    
-    void initialize_config(const bfs::path& file_path) {
-        if (!boost::filesystem::exists(file_path))
-        {
-            log_info << "initialize logging is null, write default config info.";
-            std::ofstream log_cfg(file_path.string());
-            log_cfg.write(default_cfg_info, strlen(default_cfg_info));
-            log_cfg.flush();
-            log_cfg.close();
-        }
+namespace hb {
+    namespace log {
 
-        std::ifstream file(file_path.c_str());
-        hb_try
-            logging::init_from_stream(file);
-        hb_catch([](const auto &e){
-            log_throw("initialize logging is fail, read log config file fail.", e);
-            std::exit(-2);
-        })
-    }
-} }
+        void initialize_config(const bfs::path& file_path) {
+            if (!boost::filesystem::exists(file_path)) {
+                log_info << "initialize logging is null, write default config info.";
+                std::ofstream log_cfg(file_path.string());
+                log_cfg.write(default_cfg_info, strlen(default_cfg_info));
+                log_cfg.flush();
+                log_cfg.close();
+            }
+
+            std::ifstream file(file_path.c_str());
+            hb_try logging::init_from_stream(file);
+            hb_catch([](const auto& e) {
+                log_throw("initialize logging is fail, read log config file fail.", e);
+                std::exit(-2);
+            })
+        }
+    }  // namespace log
+}  // namespace hb
 
 // if (!boost::filesystem::exists(app().get_logging_conf()))
 //                 {
-//                         std::cout << "initialize logging is fail, read log config file fail. path: " << app().get_logging_conf() << std::endl;
-//                         exit(-2);
+//                         std::cout << "initialize logging is fail, read log config file fail.
+//                         path: " << app().get_logging_conf() << std::endl; exit(-2);
 //                 }
 //                 logging::add_common_attributes();
 
@@ -89,8 +90,10 @@ namespace hb { namespace log {
 //                 }
 //                 catch (const std::exception& e)
 //                 {
-//                         std::cout << "initialize logging is fail, read log config file fail. curse: " << e.what() << std::endl;
-//                         exit(-2);
+//                         std::cout << "initialize logging is fail, read log config file fail.
+//                         curse: " << e.what() << std::endl; exit(-2);
 //                 }
-//                 src::severity_channel_logger<severity_level,std::string> file_log(keywords::channel = "TextFile");
-//                 src::severity_channel_logger<severity_level,std::string> console_log(keywords::channel = "Console");
+//                 src::severity_channel_logger<severity_level,std::string>
+//                 file_log(keywords::channel = "TextFile");
+//                 src::severity_channel_logger<severity_level,std::string>
+//                 console_log(keywords::channel = "Console");

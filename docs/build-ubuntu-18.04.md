@@ -9,21 +9,26 @@ These instructions assume:
 The repo also includes a Dockerfile which does these steps. The Dockerfile needs
 10 cores and plenty of RAM to build.
 
+docker run --name cppenv -d -v /Users/liweidong/work/mygit:/root/mygit -p 8805:8805 -p 8806:8806 -p 8807:8807 -it ubuntu:18.04 bash
+docker exec -it cppenv
+
 # Install build environment
 
 Install clang 12 and other needed tools:
 ```
 apt update && apt install -y wget curl gnupg
+apt install -y vim
 
 cd ~
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
-
 cat <<EOT >>/etc/apt/sources.list
 deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main
 deb-src http://apt.llvm.org/bionic/ llvm-toolchain-bionic main
 deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic-12 main
 deb-src http://apt.llvm.org/bionic/ llvm-toolchain-bionic-12 main
 EOT
+
+apt update # update agin
 
 apt install -y \
     autoconf2.13        \
@@ -42,6 +47,7 @@ apt install -y \
 #设置默认编译器的
 update-alternatives --install /usr/bin/clang clang /usr/bin/clang-12 100
 update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-12 100
+update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-12 100
 ```
 
 
@@ -52,7 +58,8 @@ happen if you don't have enough RAM for the number of cores you use:
 # Install boost
 ```
 cd ~
-wget https://boostorg.jfrog.io/native/main/release/1.77.0/source/boost_1_77_0.tar.gz
+# https://boostorg.jfrog.io/native/main/release 
+wget https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.gz
 tar xf boost_1_77_0.tar.gz
 cd boost_1_77_0
 ./bootstrap.sh

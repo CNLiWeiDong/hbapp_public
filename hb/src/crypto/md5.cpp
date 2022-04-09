@@ -1,26 +1,26 @@
-#include <hb/crypto/md5.h>
 #include <hb/crypto/cryptopp.h>
+#include <hb/crypto/md5.h>
 
-namespace hb { namespace crypto {
-    
-    using namespace CryptoPP;
+namespace hb {
+    namespace crypto {
 
-    std::string md5(const std::string &msg)
-    {	
-        std::string digest;
+        using namespace CryptoPP;
 
-        MD5 hash;
-        hash.Update((const byte*)msg.data(), msg.size());
-        digest.resize(hash.DigestSize());
-        hash.Final((byte*)&digest[0]);
+        std::string md5(const std::string &msg) {
+            std::string digest;
 
-        return digest;
-    }
-    
-    bool md5_verify(const std::string &msg,const std::string &digest)
-    {
-        MD5 hash;
-        return hash.VerifyDigest( (byte*)digest.c_str(), (const byte *)msg.c_str(), msg.size() );
-    }
+            MD5 hash;
+            hash.Update((const byte *)msg.data(), msg.size());
+            digest.resize(hash.DigestSize());
+            hash.Final((byte *)&digest[0]);
 
-} } // namespace hb
+            return digest;
+        }
+
+        bool md5_verify(const std::string &msg, const std::string &digest) {
+            MD5 hash;
+            return hash.VerifyDigest((byte *)digest.c_str(), (const byte *)msg.c_str(), msg.size());
+        }
+
+    }  // namespace crypto
+}  // namespace hb

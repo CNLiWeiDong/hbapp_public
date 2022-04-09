@@ -5,19 +5,21 @@
 #ifndef CPP_SERVER_LOGGING_PLUGIN_H
 #define CPP_SERVER_LOGGING_PLUGIN_H
 
-#include <memory>
-#include <thread>
-#include <functional>
-#include <string>
 #include <hb/log/log.h>
+
 #include <appbase/application.hpp>
+#include <functional>
+#include <memory>
+#include <string>
+#include <thread>
 
 using namespace std;
 
-namespace hb{ namespace plugin {
+namespace hb {
+    namespace plugin {
         using namespace appbase;
         class log_plugin : public appbase::plugin<log_plugin> {
-        public:
+          public:
             APPBASE_PLUGIN_REQUIRES()
             log_plugin();
             virtual ~log_plugin();
@@ -26,6 +28,7 @@ namespace hb{ namespace plugin {
             void plugin_startup();
             void plugin_shutdown();
         };
-}}
+    }  // namespace plugin
+}  // namespace hb
 
-#endif //CPP_SERVER_LOGGING_PLUGIN_H
+#endif  // CPP_SERVER_LOGGING_PLUGIN_H
