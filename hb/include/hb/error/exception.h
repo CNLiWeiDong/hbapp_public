@@ -111,9 +111,8 @@ template <> inline std::string exception_data(const hb::error::hb_exception_base
     return hb::error::exception_to_json(e);
 }
 
-#define HB_TRY try {
+#define HB_TRY try 
 #define HB_CATCH(fun)                               \
-    }                                               \
     catch (const hb::error::hb_exception_base& e) { \
         fun(e);                                     \
     }                                               \
