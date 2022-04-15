@@ -16,8 +16,9 @@ docker exec -it cppenv
 
 Install clang 12 and other needed tools:
 ```
-apt update && apt install -y wget curl gnupg
-apt install -y vim
+# apt install aptitude 一个安装依赖的工具
+apt update && apt install -y wget curl vim
+apt-get install build-essential autoconf libtool pkg-config libc++-dev
 
 cd ~
 wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
@@ -31,17 +32,13 @@ EOT
 apt update # update agin
 
 apt install -y \
-    autoconf2.13        \
-    build-essential     \
-    bzip2               \
-    clang-12             \
-    lld-12               \
-    lldb-12              \
-    clang-format-12      \
-    pkg-config          \
-    libmysqlclient-dev  \
-    libssl-dev          \
-    libcurl4-openssl-dev \
+    bzip2                 \
+    clang-12              \
+    clang-format-12       \
+    lld-12                \
+    lldb-12               \
+    libssl-dev            \
+    libcurl4-openssl-dev  \
     zlib1g-dev
 
 #设置默认编译器的
@@ -49,13 +46,44 @@ update-alternatives --install /usr/bin/clang clang /usr/bin/clang-12 100
 update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-12 100
 update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-12 100
 ```
+# Install openssl
 
+#### 1.0.1
+```
+wget https://www.openssl.org/source/old/1.0.1/openssl-1.0.1e.tar.gz
+tar -zxvf openssl-1.0.1e.tar.gz
+cd openssl-1.0.1e
+./config --prefix=/usr/local/openssl-1.0.1e
+make
+make install #解决方法是：编辑/usr/bin/pod2man文件，注释掉第71行。千万注意，不要像网上有些说的rm /usr/bin/pod2man，即删除pod2man这个文件，否则安装pcsc组件会出错
+```
+#### 1.1.1
+```
+wget https://www.openssl.org/source/old/1.1.1/openssl-1.1.1e.tar.gz
+tar -zxvf openssl-1.1.1e.tar.gz 
+cd openssl-1.1.1e
+./config --prefix=/usr/local/openssl-1.1.1e
+make 
+make install
+```
+#### 修改系统openssl
+```
+mv /usr/bin/openssl /usr/bin/openssl.old
+mv /usr/include/openssl /usr/include/openssl.old 
+ln -s /usr/local/openssl-1.1.1e/bin/openssl /usr/bin/openssl
+ln -s /usr/local/openssl-1.1.1e/include/openssl /usr/include/openssl
+echo "/usr/local/openssl-1.1.1e/lib" >> /etc/ld.so.conf                #在/etc/ld.so.conf文件中写入openssl库文件的搜索路径
+ldconfig -v                                                 #使修改后的/etc/ld.so.conf生效
+openssl version                                             #查看版本，看更新是否成功
+#ldd /usr/bin/openssl发现使用的不是/openssl-1.1.1e/lib/目录，所以
+#ln -s /usr/local/openssl-1.1.1e/lib/libssl.so.1.1 /usr/lib/x86_64-linux-gnu/libssl.so.1.1
+#ln -s /usr/local/openssl-1.1.1e/lib/libcrypto.so.1.1 /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1
+```
 
-
+# Install boost
 Build and install Boost 1.70. Adjust `-j10` to match your machine. Bad things will
 happen if you don't have enough RAM for the number of cores you use:
 
-# Install boost
 ```
 cd ~
 # https://boostorg.jfrog.io/native/main/release 
@@ -96,6 +124,7 @@ make install
 # Install mysql++
 
 ```
+apt install -y libmysqlclient-dev
 cd ~
 wget https://tangentsoft.com/mysqlpp/releases/mysql++-3.2.4.tar.gz
 tar -zxvf mysql++-3.2.4.tar.gz

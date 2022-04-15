@@ -23,53 +23,55 @@ namespace hb::https {
         }
     }
     int https::request() {
-        hb_try
+        hb_try {
             // The io_context is required for all I/O
             net::io_context ioc;
-        boost::system::error_code ec;
-        load_certificates();
-        // These objects perform our I/O
-        tcp::resolver resolver(ioc);
-        beast::ssl_stream<beast::tcp_stream> stream(ioc, *ctx_);
-        beast::get_lowest_layer(stream).expires_after(std::chrono::seconds(expires_));
-        // Set SNI Hostname (many hosts need this to handshake successfully)
-        if (!SSL_set_tlsext_host_name(stream.native_handle(), host_.c_str())) {
-            beast::error_code ec{static_cast<int>(::ERR_get_error()),
-                                 net::error::get_ssl_category()};
-            hb_throw(
-                hb_https_exception().msg("load_certificates beaset::error_code: %d message: %s",
-                                         ec.value(), ec.message().c_str()));
-            // throw beast::system_error{ec};
+            boost::system::error_code ec;
+            load_certificates();
+            // These objects perform our I/O
+            tcp::resolver resolver(ioc);
+            beast::ssl_stream<beast::tcp_stream> stream(ioc, *ctx_);
+            beast::get_lowest_layer(stream).expires_after(std::chrono::seconds(expires_));
+            // Set SNI Hostname (many hosts need this to handshake successfully)
+            if (!SSL_set_tlsext_host_name(stream.native_handle(), host_.c_str())) {
+                beast::error_code ec{static_cast<int>(::ERR_get_error()),
+                                     net::error::get_ssl_category()};
+                hb_throw(
+                    hb_https_exception().msg("load_certificates beaset::error_code: %d message: %s",
+                                             ec.value(), ec.message().c_str()));
+                // throw beast::system_error{ec};
+            }
+            // Look up the domain name
+            auto const results = resolver.resolve(host_, port_);
+            // Make the connection on the IP address we get from a lookup
+            beast::get_lowest_layer(stream).connect(results);
+            // Perform the SSL handshake
+            stream.handshake(ssl::stream_base::client);
+            // Send the HTTP request to the remote host
+            beast::http::write(stream, req_);
+            // This buffer is used for reading and must be persisted
+            beast::flat_buffer buffer;
+            // Declare a container to hold the response
+            beast::http::response<beast::http::string_body> res;
+            // Receive the HTTP response
+            beast::http::read(stream, buffer, res);
+            // Write the message to standard out
+            res_body_ = res.body();
+            // Gracefully close the stream
+            stream.shutdown(ec);
+            // if(ec == net::error::eof)
+            // {
+            //     ec = {};
+            // }
+            // if(ec)
+            //     throw beast::system_error{ec};
+            return 200;
         }
-        // Look up the domain name
-        auto const results = resolver.resolve(host_, port_);
-        // Make the connection on the IP address we get from a lookup
-        beast::get_lowest_layer(stream).connect(results);
-        // Perform the SSL handshake
-        stream.handshake(ssl::stream_base::client);
-        // Send the HTTP request to the remote host
-        beast::http::write(stream, req_);
-        // This buffer is used for reading and must be persisted
-        beast::flat_buffer buffer;
-        // Declare a container to hold the response
-        beast::http::response<beast::http::string_body> res;
-        // Receive the HTTP response
-        beast::http::read(stream, buffer, res);
-        // Write the message to standard out
-        res_body_ = res.body();
-        // Gracefully close the stream
-        stream.shutdown(ec);
-        // if(ec == net::error::eof)
-        // {
-        //     ec = {};
-        // }
-        // if(ec)
-        //     throw beast::system_error{ec};
-        return 200;
         hb_catch([&](const auto &e) {
             res_body_ = log_throw("do https request error", e);
             return 500;
-        }) return 0;
+        });
+        return 0;
     }
     int https::get() {
         req_.method(beast::http::verb::get);

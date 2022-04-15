@@ -64,11 +64,11 @@ namespace hb {
             }
 
             std::ifstream file(file_path.c_str());
-            hb_try logging::init_from_stream(file);
+            hb_try { logging::init_from_stream(file); }
             hb_catch([](const auto& e) {
                 log_throw("initialize logging is fail, read log config file fail.", e);
                 std::exit(-2);
-            })
+            });
         }
     }  // namespace log
 }  // namespace hb

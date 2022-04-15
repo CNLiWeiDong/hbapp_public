@@ -25,21 +25,25 @@ namespace hb {
             shared_ptr<boost::asio::io_service> get_io_service() { return _io_service; }
             void post(const string &task_name, const function<void()> &task) {
                 _io_service->post([=]() mutable throw() {
-                    hb_try log_info << "begin do thread pool work, task name:" << task_name;
-                    task();
-                    log_info << "end do thread pool work, task name:" << task_name;
+                    hb_try {
+                        log_info << "begin do thread pool work, task name:" << task_name;
+                        task();
+                        log_info << "end do thread pool work, task name:" << task_name;
+                    }
                     hb_catch(
-                        [&](const auto &e) { log_throw("do thread pool task " + task_name, e); })
+                        [&](const auto &e) { log_throw("do thread pool task " + task_name, e); });
                 });
             }
             template <typename T, typename C>
             void post(const string &task_name, const T &task, const C &callback) {
                 _io_service->post([=]() mutable throw() {
-                    hb_try log_info << "begin do thread pool work, task name:" << task_name;
-                    callback(task());
-                    log_info << "end do thread pool work, task name:" << task_name;
+                    hb_try {
+                        log_info << "begin do thread pool work, task name:" << task_name;
+                        callback(task());
+                        log_info << "end do thread pool work, task name:" << task_name;
+                    }
                     hb_catch(
-                        [&](const auto &e) { log_throw("do thread pool task " + task_name, e); })
+                        [&](const auto &e) { log_throw("do thread pool task " + task_name, e); });
                 });
             }
             // function_traits<F>::RetType
@@ -47,16 +51,18 @@ namespace hb {
             void post(const string &task_name, const boost::asio::io_service &main_io_server,
                       const T &task, const C &callback) {
                 _io_service->post([ =, &main_io_server ]() mutable throw() {
-                    hb_try log_info << "begin do thread pool work, task name:" << task_name;
-                    // callback(task());
-                    auto r = task();
-                    // if (decltype(task()) == typeid(void)) {
+                    hb_try {
+                        log_info << "begin do thread pool work, task name:" << task_name;
+                        // callback(task());
+                        auto r = task();
+                        // if (decltype(task()) == typeid(void)) {
 
-                    // }
-                    main_io_server.post([=]() mutable throw() { callback(r); });
-                    log_info << "end do thread pool work, task name:" << task_name;
+                        // }
+                        main_io_server.post([=]() mutable throw() { callback(r); });
+                        log_info << "end do thread pool work, task name:" << task_name;
+                    }
                     hb_catch(
-                        [&](const auto &e) { log_throw("do thread pool task " + task_name, e); })
+                        [&](const auto &e) { log_throw("do thread pool task " + task_name, e); });
                 });
             }
 

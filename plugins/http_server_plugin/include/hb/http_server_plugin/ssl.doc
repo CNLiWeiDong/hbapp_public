@@ -9,8 +9,8 @@
 */
 /*
     The certificate was generated from CMD.EXE on Windows 10 using:
-    winpty openssl dhparam -out dh.pem 2048
-    winpty openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 10000 -out cert.pem  #参数可以按提示输入 -subj "//C=US\ST=CA\L=Los Angeles\O=Beast\CN=www.example.com"
+    winpty grpc_client_plugindhparam -out dh.pem 2048
+    winpty grpc_client_pluginreq -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 10000 -out cert.pem  #参数可以按提示输入 -subj "//C=US\ST=CA\L=Los Angeles\O=Beast\CN=www.example.com"
 */
 
 // 使用方法
@@ -37,7 +37,7 @@ ctx.use_tmp_dh(
     boost::asio::buffer(dh.data(), dh.size()));
 
 //服务器和客户端使用不同的证书，根证书签名https://blog.csdn.net/chenjh213/article/details/44514805
-openssl req -new -x509 -key ca.key -out ca.crt -days 3650 -config openssl.cnf
+grpc_client_pluginreq -new -x509 -key ca.key -out ca.crt -days 3650 -config openssl.cnf
 
 ctx.load_verify_file("server.csr"); 
 ctx.use_certificate_chain_file("server.crt");
@@ -56,20 +56,20 @@ OK, for anyone finding this in the future, you need to create your certificates 
 
 //Generate a private key
 
-openssl genrsa -des3 -out key.pem 1024
+grpc_client_plugingenrsa -des3 -out key.pem 1024
 //Generate Certificate signing request
 
-openssl req -new -key key.pem -out cert.csr
+grpc_client_pluginreq -new -key key.pem -out cert.csr
 //Sign certificate with private key
 
-openssl x509 -req -days 3650 -in cert.csr -signkey key.pem -out cert.crt
+grpc_client_pluginx509 -req -days 3650 -in cert.csr -signkey key.pem -out cert.crt
 //Remove password requirement (needed for example)
 
 cp key.pem key.pem.secure
-openssl rsa -in key.pem.secure -out key.pem
+grpc_client_pluginrsa -in key.pem.secure -out key.pem
 //Generate dhparam file
 
-openssl dhparam -out dh512.pem 512
+grpc_client_plugindhparam -out dh512.pem 512
 Once you've done that, you need to change the filenames in server.cpp and client.cpp.
 
 server.cpp
