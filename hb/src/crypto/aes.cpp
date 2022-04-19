@@ -6,6 +6,11 @@ namespace hb {
 
         using namespace CryptoPP;
 
+        /*
+        (1)AES在密码学中又称Rijndael加密法，是美国联邦政府采用的一种区块加密标准。2006年，高级加密标准已然成为对称密钥加密中最流行的算法之一。
+        (2)AES加密数据块分组长度必须为128比特，密钥长度可以是128比特、192比特、256比特中的任意一个。(8比特==1字节)
+        (3)在CBC、CFB、OFB CTR模式下除了密钥外，还需要一个初始化向Ⅳ。(ECB模式不用IV)
+        */
         std::string cfb_aes_encrypt(const std::string &sKey, const std::string &plainText) {
             std::string outstr;
 

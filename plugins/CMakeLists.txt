@@ -1,5 +1,6 @@
 add_subdirectory(thread_pool_plugin)
 add_subdirectory(log_plugin)
 add_subdirectory(http_server_plugin)
+add_subdirectory(msg_security_plugin)
 add_subdirectory(mysql_plugin)
 add_subdirectory(send_mail_plugin)
