@@ -14,7 +14,7 @@ namespace hb::plugin {
                                            string &encrypted_msg) {
         try {
             string chiper_code = hb::crypto::random_str(10);
-            string chiper_md5 = hb::crypto::md5(chiper_code);
+            string chiper_md5 = hb::crypto::md5_hex(chiper_code);
             chiper = hb::crypto::rsa_encrypt(_http_security_public_key, chiper_code);
             encrypted_msg = hb::crypto::cfb_aes_encrypt(chiper_md5, msg);
         } catch (...) {
@@ -27,7 +27,7 @@ namespace hb::plugin {
                                            string &msg) {
         try {
             string chiper_code = hb::crypto::rsa_decrypt(_http_security_private_key, chiper);
-            string chiper_md5 = hb::crypto::md5(chiper_code);
+            string chiper_md5 = hb::crypto::md5_hex(chiper_code);
             msg = hb::crypto::cfb_aes_decrypt(chiper_md5, encrypted_msg);
         } catch (...) {
             hb_throw(smg_security_error().msg("msg_security_plugin_impl decrypt msg error."));

@@ -33,7 +33,7 @@ BOOST_AUTO_TEST_SUITE(s_msg_security)
 
 // test_msg_security
 BOOST_AUTO_TEST_CASE(test_msg_security) {
-    try {
+    hb_try {
         auto& msg_plugin = app().get_plugin<msg_security_plugin>();
         string chiper;
         string encrypted_msg;
@@ -41,9 +41,12 @@ BOOST_AUTO_TEST_CASE(test_msg_security) {
 
         msg_plugin.encrypt("hello", chiper, encrypted_msg);
         msg_plugin.decrypt(encrypted_msg, chiper, msg);
+        log_info<<"encrypted_msg:"<<encrypted_msg;
+        log_info<<"chiper:"<<chiper;
         log_info << "encrypt and decrypt success!";
-    } catch (...) {
-        log_error << "msg_security_test error!";
     }
+    hb_catch([&](const auto &e) {
+        log_throw("msg_security_test error:", e);
+    });
 }
 BOOST_AUTO_TEST_SUITE_END()

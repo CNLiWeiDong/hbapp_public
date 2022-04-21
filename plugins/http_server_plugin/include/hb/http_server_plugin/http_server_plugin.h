@@ -24,7 +24,9 @@ namespace hb {
             http_server_plugin_api(shared_ptr<http_server_plugin_impl> _impl) : impl(_impl) {}
             // void connect(const string &target, deal_fun fun) { handler::connect(target, fun); }
             std::shared_ptr<handler> start_default_server() { return impl->start_default_server(); }
-            std::shared_ptr<handler> new_server(const http_options &options) { return impl->new_server(options); }
+            std::shared_ptr<handler> new_server(const http_options &options) {
+                return impl->new_server(options);
+            }
             std::shared_ptr<handler> default_handle() { return impl->default_handle(); };
 
           private:

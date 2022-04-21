@@ -42,17 +42,16 @@ namespace hb::http_server {
     void listener::run() { do_accept(); }
     void listener::do_accept() {
         // The new connection gets its own strand
-        acceptor_.async_accept(
-            net::make_strand(*ioc_),
-            beast::bind_front_handler(&listener::on_accept, shared_from_this()));
+        acceptor_.async_accept(net::make_strand(*ioc_),
+                               beast::bind_front_handler(&listener::on_accept, shared_from_this()));
     }
     void listener::on_accept(beast::error_code ec, tcp::socket socket) {
         if (ec) {
             LOG_ERROR("accept error: %s", ec.message().c_str());
         } else {
             if (have_ssl_) {
-                auto sess = std::make_shared<session_ssl>(std::move(socket), std::ref(*ctx_),
-                                                            handle_);
+                auto sess
+                    = std::make_shared<session_ssl>(std::move(socket), std::ref(*ctx_), handle_);
                 sess->set_body_limit(body_limit_);
                 sess->set_expires_seconds(expires_seconds_);
                 sess->run();
@@ -66,4 +65,4 @@ namespace hb::http_server {
         // Accept another connection
         do_accept();
     }
-}  // namespace hb
+}  // namespace hb::http_server

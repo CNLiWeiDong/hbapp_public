@@ -98,6 +98,20 @@ BOOST_AUTO_TEST_CASE(test_aes) try {
 } catch (...) {
     log_error << "test_aes error!";
 };
+
+// test_ecb_256_aes
+BOOST_AUTO_TEST_CASE(test_ecb_256_aes) try {
+    std::string source_str = "test";
+    auto encrypt_data = ecb_256_aes_encrypt(hex(md5("123456")), source_str);
+    auto decrypt_data = ecb_256_aes_decrypt(hex(md5("123456")), encrypt_data);
+    log_info<<"ecb_256_aes_encrypt key value: "<< hex(md5("123456"));
+    log_info<<"ecb_256_aes_encrypt [test] value: " << encrypt_data;
+    log_info<<"ecb_256_aes_decrypt decrypt_data:"<<decrypt_data;
+    BOOST_CHECK_EQUAL(source_str, decrypt_data);
+} catch (...) {
+    log_error << "test_ecb_256_aes error!";
+};
+
 // test_base64
 BOOST_AUTO_TEST_CASE(test_base64) try {
     std::string source_str(

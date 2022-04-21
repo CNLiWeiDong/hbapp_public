@@ -48,9 +48,9 @@ namespace hb {
           private:
             std::shared_ptr<ssl::context> load_ssl_cert(const http_options &options);
             std::shared_ptr<handler> start_http_server(std::shared_ptr<net::io_context> ioc,
-                                                      const http_options &options);
-            std::shared_ptr<handler> start_https_server(std::shared_ptr<net::io_context> ioc,
                                                        const http_options &options);
+            std::shared_ptr<handler> start_https_server(std::shared_ptr<net::io_context> ioc,
+                                                        const http_options &options);
 
           private:
             http_options http_options_;

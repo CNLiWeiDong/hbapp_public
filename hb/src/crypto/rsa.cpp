@@ -51,7 +51,7 @@ namespace hb {
 
             std::string result;
             StringSource(plainText, true,
-                         new PK_EncryptorFilter(rng, pub, new HexEncoder(new StringSink(result))));
+                         new PK_EncryptorFilter(rng, pub, new Base64Encoder(new StringSink(result))));
             return result;
         }
 
@@ -61,7 +61,7 @@ namespace hb {
             RSAES_OAEP_SHA_Decryptor priv(privString);
             std::string result;
             StringSource(cipherText, true,
-                         new HexDecoder(new PK_DecryptorFilter(rng, priv, new StringSink(result))));
+                         new Base64Decoder(new PK_DecryptorFilter(rng, priv, new StringSink(result))));
             return result;
         }
 
