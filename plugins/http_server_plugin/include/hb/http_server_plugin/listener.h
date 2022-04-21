@@ -1,5 +1,5 @@
 #pragma once
-#include <hb/http_server_plugin/handle.h>
+#include <hb/http_server_plugin/handler.h>
 
 namespace hb {
     namespace http_server {
@@ -12,8 +12,10 @@ namespace hb {
             bool have_ssl_;
             uint64_t body_limit_ = {1048576};
             uint32_t expires_seconds_ = {30};
+            std::shared_ptr<handler> handle_;
             // deal_fun_type deal_fun_ = { nullptr };
           public:
+            std::shared_ptr<handler> handle() { return handle_; }
             listener(std::shared_ptr<net::io_context> ioc, std::shared_ptr<ssl::context> ctx,
                      tcp::endpoint endpoint)
                 : ioc_(ioc),

@@ -1,13 +1,13 @@
-#include <hb/http_server_plugin/handle.h>
+#include <hb/http_server_plugin/handler.h>
 
 #include <boost/algorithm/string.hpp>
 
 namespace hb::http_server {
 
-    map<string, shared_ptr<signal_type>> handle::registed_signals_;
-    mutex handle::signals_mutex_;
+    // map<string, shared_ptr<signal_type>> handler::registed_signals_;
+    // mutex handler::signals_mutex_;
 
-    shared_ptr<signal_type> handle::regist(const string &target) {
+    shared_ptr<signal_type> handler::regist(const string &target) {
         std::unique_lock<std::mutex> lock(signals_mutex_);
         auto it = registed_signals_.find(target);
         if (it != registed_signals_.end()) return it->second;
@@ -15,11 +15,11 @@ namespace hb::http_server {
         registed_signals_.insert(decltype(registed_signals_)::value_type(target, std::move(sig)));
         return registed_signals_[target];
     }
-    void handle::connect(const string &target, deal_fun fun) {
+    void handler::connect(const string &target, deal_fun fun) {
         auto sig = regist(target);
         sig->connect(fun);
     }
-    vector<string> handle::split_target(const string &target) {
+    vector<string> handler::split_target(const string &target) {
         string trim_target
             = boost::trim_copy_if(target, boost::is_any_of("/\t "));  // "/a/b/c 变成a/b/c"
         vector<string> target_split;
@@ -37,7 +37,7 @@ namespace hb::http_server {
         return targets;
     }
 
-    void handle::deal_request(deal_request_data &data) {
+    void handler::deal_request(deal_request_data &data) {
         string req_target = data.req.get<string>("target");
         auto targets = split_target(req_target);
         for (auto &target : targets) {

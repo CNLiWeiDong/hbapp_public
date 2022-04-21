@@ -1,5 +1,5 @@
 #pragma once
-#include <hb/http_server_plugin/handle.h>
+#include <hb/http_server_plugin/handler.h>
 
 namespace hb {
     namespace http_server {
@@ -28,12 +28,14 @@ namespace hb {
             send_lambda lambda_;
             uint64_t body_limit_ = {1048576};
             uint32_t expires_seconds_ = {30};
+            std::shared_ptr<handler> handle_;
 
           public:
             friend struct send_lambda;
             // Take ownership of the socket
-            explicit session_ssl(tcp::socket&& socket, ssl::context& ctx)
-                : stream_(std::move(socket), ctx), lambda_(*this) {
+            explicit session_ssl(tcp::socket&& socket, ssl::context& ctx,
+                                 std::shared_ptr<handler> h)
+                : stream_(std::move(socket), ctx), lambda_(*this), handle_(h) {
                 req_parser_.body_limit(body_limit_);
             }
             // Start the asynchronous operation

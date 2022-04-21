@@ -5,7 +5,7 @@ file(GLOB HEADERS "include/hb/http_server_plugin/*.h"
         )
 
 add_library(http_server_plugin
-        handle.cpp
+        handler.cpp
         session_ssl.cpp
         session.cpp
         listener.cpp

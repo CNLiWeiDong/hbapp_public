@@ -41,7 +41,7 @@ namespace hb {
             return cfb_aes_encrypt("", plainText);
         }
 
-        std::string cfb_aes_decrypt(const std::string &sKey, const std::string &cipherText) {
+        std::string cfb_aes_decrypt(const std::string &sKey, const std::string &plainText) {
             std::string outstr;
 
             //填key
@@ -59,13 +59,13 @@ namespace hb {
 
             HexDecoder decryptor(
                 new StreamTransformationFilter(cfbDecryption, new StringSink(outstr)));
-            decryptor.Put((byte *)cipherText.data(), cipherText.size());
+            decryptor.Put((byte *)plainText.data(), plainText.size());
             decryptor.MessageEnd();
 
             return outstr;
         }
-        std::string cfb_aes_decrypt(const std::string &cipherText) {
-            return cfb_aes_decrypt("", cipherText);
+        std::string cfb_aes_decrypt(const std::string &plainText) {
+            return cfb_aes_decrypt("", plainText);
         }
 
     }  // namespace crypto

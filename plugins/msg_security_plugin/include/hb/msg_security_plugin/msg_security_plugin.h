@@ -3,8 +3,9 @@
 //
 #pragma once
 
-#include <hb/msg_security_plugin/msg_security_plugin_impl.h>
 #include <hb/log_plugin/log_plugin.h>
+#include <hb/msg_security_plugin/msg_security_plugin_impl.h>
+
 #include <appbase/application.hpp>
 #include <functional>
 #include <memory>
@@ -28,10 +29,10 @@ namespace hb {
             void plugin_shutdown();
 
             void encrypt(const string &msg, string &chiper, string &encrypted_msg) {
-              my->encrypt(msg, chiper, encrypted_msg);
+                my->encrypt(msg, chiper, encrypted_msg);
             }
-            void decrypt(const string &encrypted_msg, const string &chiper, string &msg){
-               my->decrypt(encrypted_msg, chiper, msg);
+            void decrypt(const string &encrypted_msg, const string &chiper, string &msg) {
+                my->decrypt(encrypted_msg, chiper, msg);
             }
 
           private:
