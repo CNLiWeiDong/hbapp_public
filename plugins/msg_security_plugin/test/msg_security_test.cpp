@@ -3,11 +3,13 @@
 #include <hb/hb.h>
 #include <hb/log_plugin/log_plugin.h>
 #include <hb/msg_security_plugin/msg_security_plugin.h>
-
 #include <appbase/application.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/test/unit_test.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace appbase;
 using namespace hb::plugin;
@@ -39,11 +41,63 @@ BOOST_AUTO_TEST_CASE(test_msg_security) {
         string encrypted_msg;
         string msg;
 
-        msg_plugin.encrypt("hello", chiper, encrypted_msg);
+        msg_plugin.encrypt(R"({"a":1,"b":[2,3]})", chiper, encrypted_msg);
         msg_plugin.decrypt(encrypted_msg, chiper, msg);
         log_info<<"encrypted_msg:"<<encrypted_msg;
         log_info<<"chiper:"<<chiper;
         log_info << "encrypt and decrypt success!";
+        log_info<<"msg:"<<msg;
+        boost::trim_if(msg, boost::is_any_of(" \0"));
+        log_info<<"msg2:"<<msg;
+    }
+    hb_catch([&](const auto &e) {
+        log_throw("msg_security_test error:", e);
+    });
+}
+
+// test_msg_security_decode
+BOOST_AUTO_TEST_CASE(test_msg_security_decode) {
+    hb_try {
+        auto& msg_plugin = app().get_plugin<msg_security_plugin>();
+        string chiper = "ok1/huOp3hmrQwuVPPGtxcnHWiloejONbp6haWqpSNq+DBT++e6K48H3y6CrJNc2+zaIAUY6WIdOcK4YB8P4palhSZ9Nb30s8Q64Kb5rgVaqLsfLJSU8F2qT2LOw9pUcWxQ81V1SCyP8rE/HPG4V/MRCRzw8GNn4fQD9SgUVvf8Q9x02yiq8bvACN6pz1G6Wu/Fkh4C05EqoSA9GJWt/EfZ39OXnpNTnu8YyO2Z5lHWoXNBAtwW6QOLT2SK7glXocskWg1HLMYUnNXC9bIIANH9rvqfsfzfYPbbaefUjL4+1DgW5H1XrFyf6cOiK0bs82TwSYCv9UDkoKtmMWWvQsaFv1oNzzpZ+OBffrDb2ZtdrDNgAT7eo+Hb8qwUopRD2OhmcA61rrj/WHDngmxUB34R1SH4bhOzjlDjVocX9Tn3LbIbbp33T9E88nP0vYSoPQE7vQSsAo4u9wdVYO22AIyVeGTUU6FDM804bbbyvmbTJozRFRqjk5RSWQc63Mxst";
+        string encrypted_msg = "Sc0xFPMNKRu9hA39UXI0C2T/aAdTeXdHCxvx8Ph7Wx4=";
+        string msg;
+
+        msg_plugin.decrypt(encrypted_msg, chiper, msg);
+        log_info<<"msg:"<<msg;
+        log_info<<"msg_hex:"<<hb::crypto::hex(msg);
+        
+
+    }
+    hb_catch([&](const auto &e) {
+        log_throw("msg_security_test error:", e);
+    });
+}
+
+// test_msg_security_decode1
+BOOST_AUTO_TEST_CASE(test_msg_security_decode1) {
+    hb_try {
+        log_info<< "====================================================================";
+
+        auto& msg_plugin = app().get_plugin<msg_security_plugin>();
+        string chiper = "WrWAkVnjCjNGa65/32OP5ya1YWKk/Qzrmz5BL+HvpXvFTH9K1UNKPOg8F+K7evfutjped7APzcCUsFqya+dikVJXmb8Xq/+sOX0cjqhmAZxmuYnh67qF+QnCIRG5AoimUrKvJm0gvF/MKh7/ggN1+axrB9P0aJPGbsGFDEn8225FOp1VbMgcbu3SRuqgajOLdcHBvJwwKJs8Esc3rmjYhhxqrGlkYPMgiG8aU8MmH4QMiHoaY7fN6zUGm4KZvsDFyUNQdfaHe+o6a740nt1THzAz6rImZAsc7BtUxcnVL/G9PZRxqQL3yAwr4R0a524Q80GnU4N5L1DbMEJ8JJUySLZaRV2SkheUO4VcsBTGH279PKHIQC64EsuAw0Wy2DC60+SfDFWHYU15z620jxWqbgdAtiiPS42YhGG3aUzEWoK7DWbI2EYFm3kZSsPrtNL7HOZTcy19EfKhaoSNkUHmJIVRCUfinfsTzFHksjAD7dqfCq5Y8L9QgbOAyeeP9zUE";
+        string encrypted_msg = "FWs+6CI/i6p7Vh7In/utxhamb+6xnB4QnUxkMEF6UrA=";
+        string msg;
+
+        msg_plugin.decrypt(encrypted_msg, chiper, msg);
+        
+        log_info<<"msg:"<<msg;
+        log_info<<"msg_hex:"<<hb::crypto::hex(msg);
+
+        boost::trim_if(msg, boost::is_any_of(" \0"));
+        log_info<<"msg_hex:"<<hb::crypto::hex(msg);
+        msg = msg.c_str();
+        log_info<<"msg_cstr"<<hb::crypto::hex(msg);
+        boost::property_tree::ptree j;
+        stringstream stream(msg);
+        read_json(stream, j);
+        log_info<<j.get("a",0);
+       
     }
     hb_catch([&](const auto &e) {
         log_throw("msg_security_test error:", e);

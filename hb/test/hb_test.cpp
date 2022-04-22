@@ -107,9 +107,21 @@ BOOST_AUTO_TEST_CASE(test_ecb_256_aes) try {
     log_info<<"ecb_256_aes_encrypt key value: "<< hex(md5("123456"));
     log_info<<"ecb_256_aes_encrypt [test] value: " << encrypt_data;
     log_info<<"ecb_256_aes_decrypt decrypt_data:"<<decrypt_data;
+    boost::trim_if(decrypt_data, boost::is_any_of(" \0"));  // "/a/b/c 变成a/b/c"
     BOOST_CHECK_EQUAL(source_str, decrypt_data);
 } catch (...) {
     log_error << "test_ecb_256_aes error!";
+};
+
+// test_ecb_256_aes2
+BOOST_AUTO_TEST_CASE(test_ecb_256_aes2) try {
+    // std::string source_str = "test";
+    // auto encrypt_data = ecb_256_aes_encrypt(hex(md5("123456")), source_str);
+    auto decrypt_data = ecb_256_aes_decrypt("c829a6948aa3d614f1bc26e39f58ab06", "FWs+6CI/i6p7Vh7In/utxhamb+6xnB4QnUxkMEF6UrA=");
+    
+    log_info<<"test_ecb_256_aes2 decrypt_data:"<<decrypt_data;
+} catch (...) {
+    log_error << "test_ecb_256_aes2 error!";
 };
 
 // test_base64

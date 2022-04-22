@@ -38,6 +38,7 @@ namespace hb {
         }
         std::shared_ptr<handler> http_server_plugin_impl::start_http_server(
             std::shared_ptr<net::io_context> ioc, const http_options &options) {
+            log_info<<"http_server_plugin_impl::start_http_server";
             auto const address = net::ip::make_address(options.host);
             auto const port = static_cast<unsigned short>(options.port);
             auto l = std::make_shared<listener>(ioc, tcp::endpoint{address, port});
@@ -50,6 +51,7 @@ namespace hb {
         }
         std::shared_ptr<handler> http_server_plugin_impl::start_https_server(
             std::shared_ptr<net::io_context> ioc, const http_options &options) {
+            log_info<<"http_server_plugin_impl::start_https_server";
             auto const address = net::ip::make_address(options.host);
             auto const port = static_cast<unsigned short>(options.port);
             auto ctx = load_ssl_cert(options);
@@ -63,6 +65,7 @@ namespace hb {
         }
         void http_server_plugin_impl::start() {}
         std::shared_ptr<handler> http_server_plugin_impl::start_default_server() {
+            log_info<<"http_server_plugin_impl::start_default_server";
             auto &thread_plugin = app().get_plugin<thread_pool_plugin>();
             auto abi = thread_plugin.get_api();
             auto ioc = abi->get_io_context();
@@ -77,6 +80,7 @@ namespace hb {
         }
 
         std::shared_ptr<handler> http_server_plugin_impl::new_server(const http_options &options) {
+            log_info<<"http_server_plugin_impl::new_server start";
             auto &thread_plugin = app().get_plugin<thread_pool_plugin>();
             auto abi = thread_plugin.get_api();
             auto ioc = abi->get_io_context();

@@ -48,7 +48,7 @@ namespace hb {
                 CryptoPP::StreamTransformationFilter::ZEROS_PADDING));
             CryptoPP::StringSource(cipher, true, decryptor);
 
-            return result;
+            return result.c_str(); // 字符串结尾有一些\0需要移除掉
         }
 
         std::string cfb_aes_encrypt(const std::string &sKey, const std::string &plainText) {
