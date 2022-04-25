@@ -59,12 +59,12 @@ namespace hb::https {
             res_body_ = res.body();
             // Gracefully close the stream
             stream.shutdown(ec);
-            // if(ec == net::error::eof)
-            // {
-            //     ec = {};
-            // }
-            // if(ec)
-            //     throw beast::system_error{ec};
+            if(ec == net::error::eof)
+            {
+                ec = {};
+            }
+            if(ec)
+                throw beast::system_error{ec};
             return 200;
         }
         hb_catch([&](const auto &e) {
@@ -81,7 +81,9 @@ namespace hb::https {
         req_.method(beast::http::verb::post);
         req_.set(beast::http::field::content_length,
                  boost::lexical_cast<std::string>(req_body_.size()));
-        req_.set(beast::http::field::body, req_body_);
+        // req_.set(beast::http::field::body, req_body_);
+        req_.body() = req_body_; // beast::http::field::body不起作用
+        req_.prepare_payload();
         return request();
     }
     void https::post(net::io_context &ioc, const response_fun_type &callback) {
@@ -89,7 +91,8 @@ namespace hb::https {
         req_.method(beast::http::verb::post);
         req_.set(beast::http::field::content_length,
                  boost::lexical_cast<std::string>(req_body_.size()));
-        req_.set(beast::http::field::body, req_body_);
+        // req_.set(beast::http::field::body, req_body_);
+        req_.body() = req_body_;
         req_.prepare_payload();
         auto sess = std::make_shared<session>(ioc, *ctx_, req_, callback);
         sess->request(host_, port_);

@@ -35,6 +35,7 @@ namespace hb {
             beast::flat_buffer buffer_;  // (Must persist between reads)
             beast::http::request<beast::http::string_body> req_;
             beast::http::response<beast::http::string_body> res_;
+            // beast::http::response<beast::http::dynamic_body> res_;
             response_fun_type response_fun_;
             int expires_ = {30};
 
