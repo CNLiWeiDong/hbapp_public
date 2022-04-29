@@ -1,8 +1,9 @@
 #include <hb/crypto/cryptopp.h>
-#include <hb/crypto/md5.h>
 #include <hb/crypto/hex.h>
-#include <boost/lexical_cast.hpp>
+#include <hb/crypto/md5.h>
+
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 
 namespace hb {
     namespace crypto {
@@ -19,7 +20,7 @@ namespace hb {
 
             return digest;
         }
-        std::string md5_hex(const std::string &msg){
+        std::string md5_hex(const std::string &msg) {
             std::string h = hex(md5(msg));
             boost::to_lower(h);
             return h;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 namespace hb::plugin {
 
     const uint32_t item_id_empirical_prop1 = 10001;

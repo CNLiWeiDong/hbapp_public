@@ -26,12 +26,12 @@ namespace hb {
                 // Receive the HTTP response
                 beast::http::read(stream, buffer, res);
                 // Write the message to standard out
-                res_body_ = res.body(); // boost::beast::buffers_to_string(res.body().data()); // boost::asio::buffer_cast<const char*>(res.body.data());
+                res_body_ = res.body();  // boost::beast::buffers_to_string(res.body().data()); //
+                                         // boost::asio::buffer_cast<const char*>(res.body.data());
                 // Gracefully close the socket
                 beast::error_code ec;
                 stream.socket().shutdown(tcp::socket::shutdown_both, ec);
-                if(ec && ec != beast::errc::not_connected)
-                    throw beast::system_error{ec};
+                if (ec && ec != beast::errc::not_connected) throw beast::system_error{ec};
                 return 200;
             }
             hb_catch([&](const auto &e) {
@@ -51,7 +51,7 @@ namespace hb {
             req_.set(beast::http::field::content_length,
                      boost::lexical_cast<std::string>(req_body_.size()));
             // req_.set(beast::http::field::body, req_body_);
-            req_.body() = req_body_; // beast::http::field::body不起作用
+            req_.body() = req_body_;  // beast::http::field::body不起作用
             req_.prepare_payload();
             return request();
         }

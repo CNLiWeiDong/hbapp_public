@@ -15,5 +15,6 @@
 #include "hb/sync/sync_signal.h"
 #include "hb/time/time.h"
 #include "hb/types/types.h"
+#include "hb/types/bigint.h"
 #include "hb/util/util.h"
 #include "hb/zip/zlib.h"

@@ -59,12 +59,10 @@ namespace hb::https {
             res_body_ = res.body();
             // Gracefully close the stream
             stream.shutdown(ec);
-            if(ec == net::error::eof)
-            {
+            if (ec == net::error::eof) {
                 ec = {};
             }
-            if(ec)
-                throw beast::system_error{ec};
+            if (ec) throw beast::system_error{ec};
             return 200;
         }
         hb_catch([&](const auto &e) {
@@ -82,7 +80,7 @@ namespace hb::https {
         req_.set(beast::http::field::content_length,
                  boost::lexical_cast<std::string>(req_body_.size()));
         // req_.set(beast::http::field::body, req_body_);
-        req_.body() = req_body_; // beast::http::field::body不起作用
+        req_.body() = req_body_;  // beast::http::field::body不起作用
         req_.prepare_payload();
         return request();
     }

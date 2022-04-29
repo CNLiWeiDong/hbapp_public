@@ -3,9 +3,10 @@
 //
 #pragma once
 
-#include <hb/json_table_plugin/json_table_error.h>
 #include <hb/json_table_plugin/constant_var.h>
+#include <hb/json_table_plugin/json_table_error.h>
 #include <hb/log/log.h>
+
 #include <appbase/application.hpp>
 #include <atomic>
 #include <boost/algorithm/algorithm.hpp>

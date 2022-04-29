@@ -12,43 +12,40 @@ namespace hb {
         (3)在CBC、CFB、OFB CTR模式下除了密钥外，还需要一个初始化向Ⅳ。(ECB模式不用IV)
         */
 
-        std::string ecb_256_aes_encrypt(std::string sKey, std::string plain)
-        {
+        std::string ecb_256_aes_encrypt(std::string sKey, std::string plain) {
             //填key
             SecByteBlock key(AES::MAX_KEYLENGTH);
             memset(key, 0x30, key.size());
-            sKey.size() <= AES::MAX_KEYLENGTH
-                ? memcpy(key, sKey.c_str(), sKey.size())
-                : memcpy(key, sKey.c_str(), AES::MAX_KEYLENGTH);
+            sKey.size() <= AES::MAX_KEYLENGTH ? memcpy(key, sKey.c_str(), sKey.size())
+                                              : memcpy(key, sKey.c_str(), AES::MAX_KEYLENGTH);
 
             std::string result;
-            CryptoPP::ECB_Mode<CryptoPP::AES>::Encryption ecb_encryptor((byte *)key, CryptoPP::AES::MAX_KEYLENGTH);
-            auto encryptor = new CryptoPP::StreamTransformationFilter(ecb_encryptor,
-                new CryptoPP::Base64Encoder(new CryptoPP::StringSink(result), false),
+            CryptoPP::ECB_Mode<CryptoPP::AES>::Encryption ecb_encryptor(
+                (byte *)key, CryptoPP::AES::MAX_KEYLENGTH);
+            auto encryptor = new CryptoPP::StreamTransformationFilter(
+                ecb_encryptor, new CryptoPP::Base64Encoder(new CryptoPP::StringSink(result), false),
                 CryptoPP::StreamTransformationFilter::ZEROS_PADDING);
             CryptoPP::StringSource(plain, true, encryptor);
 
             return result;
         }
 
-        std::string ecb_256_aes_decrypt(std::string sKey, std::string cipher)
-        {
+        std::string ecb_256_aes_decrypt(std::string sKey, std::string cipher) {
             //填key
             SecByteBlock key(AES::MAX_KEYLENGTH);
             memset(key, 0x30, key.size());
-            sKey.size() <= AES::MAX_KEYLENGTH
-                ? memcpy(key, sKey.c_str(), sKey.size())
-                : memcpy(key, sKey.c_str(), AES::MAX_KEYLENGTH);
-
+            sKey.size() <= AES::MAX_KEYLENGTH ? memcpy(key, sKey.c_str(), sKey.size())
+                                              : memcpy(key, sKey.c_str(), AES::MAX_KEYLENGTH);
 
             std::string result;
-            CryptoPP::ECB_Mode<CryptoPP::AES>::Decryption ecb_decryptor((byte *)key, CryptoPP::AES::MAX_KEYLENGTH);
-            auto decryptor = new CryptoPP::Base64Decoder(new CryptoPP::StreamTransformationFilter(ecb_decryptor,
-                new CryptoPP::StringSink(result),
+            CryptoPP::ECB_Mode<CryptoPP::AES>::Decryption ecb_decryptor(
+                (byte *)key, CryptoPP::AES::MAX_KEYLENGTH);
+            auto decryptor = new CryptoPP::Base64Decoder(new CryptoPP::StreamTransformationFilter(
+                ecb_decryptor, new CryptoPP::StringSink(result),
                 CryptoPP::StreamTransformationFilter::ZEROS_PADDING));
             CryptoPP::StringSource(cipher, true, decryptor);
 
-            return result.c_str(); // 字符串结尾有一些\0需要移除掉
+            return result.c_str();  // 字符串结尾有一些\0需要移除掉
         }
 
         std::string cfb_aes_encrypt(const std::string &sKey, const std::string &plainText) {

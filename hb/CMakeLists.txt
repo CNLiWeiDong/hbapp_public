@@ -17,6 +17,7 @@ set(hb_sources
         src/crypto/md5.cpp
         src/crypto/rsa.cpp
         src/crypto/random.cpp
+        src/types/bigint.cpp
         )
 
 file( GLOB_RECURSE hb_headers ${CMAKE_CURRENT_SOURCE_DIR} *.hpp *.h )

@@ -7,26 +7,28 @@ namespace hb::plugin {
     json_table_plugin_impl::json_table_plugin_impl() {}
     json_table_plugin_impl::~json_table_plugin_impl() {}
     shared_ptr<const ptree> json_table_plugin_impl::get_item_byid(const string &table_name,
-                                                                uint32_t id) {
+                                                                  uint32_t id) {
         constant_table::index<_id>::type &find_id = _json_tables[table_name].get<_id>();
         constant_table::index<_id>::type::iterator iter = find_id.find(id);
         if (iter != find_id.end()) {
             return iter->json;
         }
-        hb_throw(json_table_exception().msg("read json error file:%s id:%d", table_name.c_str(), id));
+        hb_throw(
+            json_table_exception().msg("read json error file:%s id:%d", table_name.c_str(), id));
     }
-    constant_table::index<_id>::type &json_table_plugin_impl::get_id_items(const string &table_name) {
+    constant_table::index<_id>::type &json_table_plugin_impl::get_id_items(
+        const string &table_name) {
         return _json_tables[table_name].get<_id>();
     }
     shared_ptr<const ptree> json_table_plugin_impl::get_item_bykey(const string &table_name,
-                                                                 const string &key) {
+                                                                   const string &key) {
         constant_table::index<_key>::type &find_key = _json_tables[table_name].get<_key>();
         constant_table::index<_key>::type::iterator iter = find_key.find(key);
         if (iter != find_key.end()) {
             return iter->json;
         }
         hb_throw(json_table_exception().msg("read json error file:%s key:%s", table_name.c_str(),
-                                          key.c_str()));
+                                            key.c_str()));
     }
     constant_table::index<_key>::type &json_table_plugin_impl::get_key_items(
         const string &table_name) {
@@ -50,14 +52,14 @@ namespace hb::plugin {
                 read_json(dir->path().string(), json_data);
                 if (json_data.empty()) {
                     hb_throw(json_table_exception().msg("read json file is empty! %s",
-                                                      dir->path().string()));
+                                                        dir->path().string()));
                 }
                 for (auto &p : json_data) {
                     constant item;
                     item.id = p.second.get("id", 0);
                     if (item.id == 0) {
                         hb_throw(json_table_exception().msg("read json file no id exist! %s",
-                                                          dir->path().string()));
+                                                            dir->path().string()));
                     }
                     string key = p.second.get("key", "");
                     key == "" ? item.key = to_string(item.id) : item.key = key;

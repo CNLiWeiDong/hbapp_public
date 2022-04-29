@@ -12,7 +12,7 @@ namespace hb {
         json_table_plugin::json_table_plugin() {}
         json_table_plugin::~json_table_plugin() {}
         void json_table_plugin::set_program_options(options_description &cli,
-                                                  options_description &cfg) {
+                                                    options_description &cfg) {
             cfg.add_options()("constant-json-config-dir",
                               boost::program_options::value<string>()->default_value("json"),
                               "constant-json-config-dir to load all json file!");
@@ -27,7 +27,8 @@ namespace hb {
                 if (json_path.is_relative()) {
                     json_path = app().config_dir() / json_path;
                 }
-                log_debug << "json_table_plugin::plugin_initialize json path:" << json_path.string();
+                log_debug << "json_table_plugin::plugin_initialize json path:"
+                          << json_path.string();
                 my->load_json(json_path);
             }
             hb_catch([&](const auto &e) {
