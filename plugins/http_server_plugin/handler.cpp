@@ -26,6 +26,7 @@ namespace hb::http_server {
         boost::split(target_split, trim_target, boost::is_any_of("/"));  // a,b,c
 
         vector<string> targets;
+        targets.push_back("root"); // 默认增加一个根路由，每次请求都要执行的
         // target: a/b/c  拆分成"a","a/b","a/b/c"一共3个target, num是target的数量
         for (int num = 1; num <= target_split.size(); num++) {
             string t;
