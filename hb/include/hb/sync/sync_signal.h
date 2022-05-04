@@ -11,14 +11,12 @@
 #include <hb/sync/sync_error.h>
 #include <stdio.h>
 #include <unistd.h>
-
 #include <atomic>
 #include <functional>
 #include <future>
 #include <list>
 #include <mutex>
 #include <vector>
-
 #include "hb/log/log.h"
 
 using namespace std;
@@ -27,7 +25,9 @@ namespace hb {
     namespace sycn {
         class sync_signal {
           public:
-            sync_signal(bool time_out = true) : time_out_check(time_out) {
+            sync_signal(bool is_time_out = true, int sec = 30) : 
+            time_out_check(is_time_out), 
+            time_out_sec(sec) {
                 if (::pipe(_pipe_sign) != 0)
                     hb_throw(hb_sync_exception().msg("init sync_signal pipe sign error!"));
                 ::fcntl(_pipe_sign[0], F_SETFL, O_NONBLOCK);
@@ -53,7 +53,9 @@ namespace hb {
                 vector<char> data(num);
                 int readed_length = 0;
                 struct timeval timeout;
-                timeout.tv_sec = 4;
+                if (time_out_check) {
+                    timeout.tv_sec = time_out_sec;
+                }
                 timeout.tv_usec = 10000;
                 fd_set set;
                 int rv;
@@ -88,6 +90,7 @@ namespace hb {
             int _pipe_sign[2];
             int _sign_write;
             int _sign_read;
+            int time_out_sec = 30;
             bool time_out_check = true;
         };
 
