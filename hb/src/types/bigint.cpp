@@ -398,4 +398,4 @@ namespace hb::type {
         return result;
     }
 
-}  // namespace
+}  // namespace hb::type

@@ -7,14 +7,14 @@
 
 namespace hb::type {
     class Bigint {
-        private:
+      private:
         std::vector<int> number;
         bool positive;
         int base;
         unsigned int skip;
         static const int default_base = 1000000000;
 
-        public:
+      public:
         // Constructors
         Bigint();
         Bigint(long long);
@@ -66,7 +66,7 @@ namespace hb::type {
         int digits() const;
         int trailing_zeros() const;
 
-        private:
+      private:
         int segment_length(int) const;
         Bigint pow(int const &, std::map<int, Bigint> &);
         int compare(Bigint const &) const;  // 0 a == b, -1 a < b, 1 a > b
@@ -75,6 +75,6 @@ namespace hb::type {
     Bigint abs(Bigint);
     std::string to_string(Bigint const &);
     Bigint factorial(int);
-}
+}  // namespace hb::type
 
 #endif
