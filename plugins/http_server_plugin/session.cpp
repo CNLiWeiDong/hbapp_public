@@ -17,7 +17,7 @@ namespace hb {
         void session::on_read(beast::error_code ec, std::size_t bytes_transferred) {
             boost::ignore_unused(bytes_transferred);
             // This means they closed the connection
-            if (ec == http::error::end_of_stream) return do_close_read();
+            if (ec == http::error::end_of_stream) return do_close();
             if (ec) {
                 LOG_ERROR("read error: %s", ec.message().c_str());
                 return do_close();
@@ -33,14 +33,25 @@ namespace hb {
                 return do_close();
             }
             if (close) {
-                return do_close_write();
+                return do_close();
             }
             // We're done with the response so delete it
             res_ = nullptr;
             // Read another request
             // do_read();
         }
-        void session::do_close() { stream_.socket().close(); }
+        void session::do_close() { 
+            hb_try{
+                beast::error_code ec;
+                stream_.socket().shutdown(tcp::socket::shutdown_send, ec);
+                // stream_.socket().shutdown(tcp::socket::shutdown_receive, ec);
+                // stream_.socket().close(); 
+            } 
+            hb_catch([&](const auto &e) {
+                log_throw("get_transaction_receipt deal response error:", e);
+            });
+           
+        }
         void session::do_close_read() {
             beast::error_code ec;
             stream_.socket().shutdown(tcp::socket::shutdown_receive, ec);

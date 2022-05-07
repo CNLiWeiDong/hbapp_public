@@ -18,4 +18,7 @@ namespace hb::util {
         }
         return res;
     }
+    bool ignore_case_equal(const string &str1, const string &str2) {
+        return boost::to_lower_copy(str1)==boost::to_lower_copy(str2);
+    }
 }  // namespace hb::util

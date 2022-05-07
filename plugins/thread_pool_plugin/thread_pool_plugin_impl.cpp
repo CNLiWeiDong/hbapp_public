@@ -7,7 +7,7 @@
 namespace hb {
     namespace plugin {
         thread_pool_plugin_impl::thread_pool_plugin_impl(const int& thread_num) {
-            _io_service = make_shared<boost::asio::io_service>();
+            _io_service = make_shared<boost::asio::io_service>(); // 构造方法可传thread_num，不知道什么意思
             _service_work = make_shared<boost::asio::io_service::work>(*_io_service);
             for (int i = 0; i < thread_num; i++) {
                 _workers.emplace_back([this]() { this->_io_service->run(); });

@@ -87,7 +87,7 @@ namespace hb::http_server {
                 data.result.put("target", req_target);
                 data.result.put("error", "");  //默认没有错误 error不为空串时报错
                 data.result.put("code", 0);    //默认没有错误 code 为0表示操作成功
-                auto const send_response = [&](http::status status) {
+                auto const send_response = [&](http::status status) noexcept{
                     stringstream stream;
                     write_json(stream, data.result, false);
                     http::response<http::string_body> res{status, req.version()};

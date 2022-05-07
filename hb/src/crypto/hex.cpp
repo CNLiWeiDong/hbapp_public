@@ -34,16 +34,18 @@ namespace hb::crypto {
     //十进制数字转十六进字符串
     std::string dec_to_hex(int64_t decn) {
         std::stringstream ss;
-        ss << std::hex << std::showbase << std::nouppercase << decn;
+        // std::showbase <<
+        ss << std::hex << std::nouppercase << decn;
         std::string hex_str = ss.str();
-        return hex_str;
+        return "0x"+hex_str;
     }
 
     int oct_to_dec(std::string octstr) {
         int decn;
         std::stringstream ss;
         ss.str(octstr);
-        ss << std::oct << std::showbase << std::nouppercase << decn;
+        // std::showbase <<
+        ss << std::oct << std::nouppercase << decn;
         return decn;
     }
 }  // namespace hb::crypto

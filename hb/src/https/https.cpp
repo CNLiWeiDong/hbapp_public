@@ -26,7 +26,7 @@ namespace hb::https {
         hb_try {
             // The io_context is required for all I/O
             net::io_context ioc;
-            boost::system::error_code ec;
+            // boost::system::error_code ec;
             load_certificates();
             // These objects perform our I/O
             tcp::resolver resolver(ioc);
@@ -58,11 +58,13 @@ namespace hb::https {
             // Write the message to standard out
             res_body_ = res.body();
             // Gracefully close the stream
+            beast::error_code ec;
+            beast::get_lowest_layer(stream).cancel();
             stream.shutdown(ec);
-            if (ec == net::error::eof) {
-                ec = {};
+            if(ec && ec != net::error::eof && ec != beast::errc::not_connected && ec!= boost::asio::ssl::error::stream_truncated)
+            {
+                throw beast::system_error{ec};
             }
-            if (ec) throw beast::system_error{ec};
             return 200;
         }
         hb_catch([&](const auto &e) {

@@ -21,6 +21,7 @@ namespace hb {
                     // Store a type-erased version of the shared
                     // pointer in the class to keep it alive.
                     self_.res_ = sp;
+                    self_.stream_.expires_after(std::chrono::seconds(self_.expires_seconds_));
                     // Write the response
                     http::async_write(
                         self_.stream_, *sp,
