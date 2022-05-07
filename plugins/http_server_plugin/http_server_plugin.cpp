@@ -32,7 +32,7 @@ namespace hb {
                 "password with the private key. File path in config-dir.");
         }
         void http_server_plugin::plugin_initialize(const variables_map& options) {
-            log_info << "http_server_plugin::plugin_initialize";
+            log_info("http_server_plugin::plugin_initialize");
             if (options.at("default-https-enable").as<bool>()
                 && (!(options.count("default-https-certificate-file")
                       && options.at("default-https-certificate-file").as<string>().length())
@@ -71,11 +71,11 @@ namespace hb {
             my = make_shared<http_server_plugin_impl>(http_op);
         }
         void http_server_plugin::plugin_startup() {
-            log_info << "http_server_plugin::plugin_startup";
+            log_info("http_server_plugin::plugin_startup");
             my->start();
         }
         void http_server_plugin::plugin_shutdown() {
-            log_info << "http_server_plugin::plugin_shutdown";
+            log_info("http_server_plugin::plugin_shutdown");
             if (my) my.reset();
         }
     }  // namespace plugin

@@ -31,7 +31,7 @@ namespace hb {
                 "rsa public key use to decrypt http body!");
         }
         void msg_security_plugin::plugin_initialize(const variables_map &options) {
-            log_info << "msg_security_plugin::plugin_initialize";
+            log_info("msg_security_plugin::plugin_initialize");
             hb_try {
                 my = make_shared<msg_security_plugin_impl>();
                 auto private_key_file
@@ -50,10 +50,10 @@ namespace hb {
             });
         }
         void msg_security_plugin::plugin_startup() {
-            log_info << "msg_security_plugin::plugin_startup";
+            log_info("msg_security_plugin::plugin_startup");
         }
         void msg_security_plugin::plugin_shutdown() {
-            log_info << "msg_security_plugin::plugin_shutdown";
+            log_info("msg_security_plugin::plugin_shutdown");
         }
     }  // namespace plugin
 }  // namespace hb

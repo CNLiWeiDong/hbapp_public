@@ -16,7 +16,7 @@ namespace hb {
             auto api = thread_plugin.get_api();
             auto self = shared_from_this();
             std::string task_id = "send_mail_" + to_string(send_mail_task_id++);
-            log_info << "send mail to: " << to << "thread task is: " << task_id;
+            log_info("send mail to: %s thread task is: %s", to.c_str(), task_id.c_str());
             api->post(task_id, [=]() {
                 session sess;
                 sess.host(self->host());

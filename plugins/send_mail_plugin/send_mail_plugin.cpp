@@ -27,16 +27,16 @@ namespace hb {
                 "he mail server port.");
         }
         void send_mail_plugin::plugin_initialize(const variables_map& options) {
-            log_info << "send_mail_plugin::plugin_initialize";
+            log_info("send_mail_plugin::plugin_initialize");
             my = make_shared<send_mail_plugin_impl>();
             my->host(options.at("mail-server-host").as<string>());
             my->port(options.at("mail-server-port").as<string>());
             my->user(options.at("mail-login-user").as<string>());
             my->pass(options.at("mail-login-pass").as<string>());
         }
-        void send_mail_plugin::plugin_startup() { log_info << "send_mail_plugin::plugin_startup"; }
+        void send_mail_plugin::plugin_startup() { log_info("send_mail_plugin::plugin_startup"); }
         void send_mail_plugin::plugin_shutdown() {
-            log_info << "send_mail_plugin::plugin_shutdown";
+            log_info("send_mail_plugin::plugin_shutdown");
             if (my) my.reset();
         }
     }  // namespace plugin

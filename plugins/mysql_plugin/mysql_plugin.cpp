@@ -15,11 +15,11 @@ namespace hb {
                               "mysql connect pool max num");
         }
         void mysql_plugin::plugin_initialize(const variables_map& options) {
-            log_info << "mysql_plugin::plugin_initialize";
+            log_info("mysql_plugin::plugin_initialize");
             my = make_shared<mysql_plugin_impl>();
             my->pool_max_size(options.at("mysql-pool-max-size").as<int>());
         }
-        void mysql_plugin::plugin_startup() { log_info << "mysql_plugin::plugin_startup"; }
-        void mysql_plugin::plugin_shutdown() { log_info << "mysql_plugin::plugin_shutdown"; }
+        void mysql_plugin::plugin_startup() { log_info("mysql_plugin::plugin_startup"); }
+        void mysql_plugin::plugin_shutdown() { log_info("mysql_plugin::plugin_shutdown"); }
     }  // namespace plugin
 }  // namespace hb

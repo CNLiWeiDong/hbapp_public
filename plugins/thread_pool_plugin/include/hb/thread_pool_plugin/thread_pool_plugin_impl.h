@@ -26,9 +26,9 @@ namespace hb {
             void post(const string &task_name, const function<void()> &task) {
                 _io_service->post([=]() mutable throw() {
                     hb_try {
-                        log_info << "begin do thread pool work, task name:" << task_name;
+                        log_info("begin do thread pool work, task name:%s", task_name.c_str());
                         task();
-                        log_info << "end do thread pool work, task name:" << task_name;
+                        log_info("end do thread pool work, task name:%s", task_name.c_str());
                     }
                     hb_catch(
                         [&](const auto &e) { log_throw("do thread pool task " + task_name, e); });
@@ -38,9 +38,9 @@ namespace hb {
             void post(const string &task_name, const T &task, const C &callback) {
                 _io_service->post([=]() mutable throw() {
                     hb_try {
-                        log_info << "begin do thread pool work, task name:" << task_name;
+                        log_info("begin do thread pool work, task name:%s", task_name.c_str());
                         callback(task());
-                        log_info << "end do thread pool work, task name:" << task_name;
+                        log_info("end do thread pool work, task name:%s", task_name.c_str());
                     }
                     hb_catch(
                         [&](const auto &e) { log_throw("do thread pool task " + task_name, e); });
@@ -52,14 +52,14 @@ namespace hb {
                       const T &task, const C &callback) {
                 _io_service->post([ =, &main_io_server ]() mutable throw() {
                     hb_try {
-                        log_info << "begin do thread pool work, task name:" << task_name;
+                        log_info("begin do thread pool work, task name:%s", task_name.c_str());
                         // callback(task());
                         auto r = task();
                         // if (decltype(task()) == typeid(void)) {
 
                         // }
                         main_io_server.post([=]() mutable throw() { callback(r); });
-                        log_info << "end do thread pool work, task name:" << task_name;
+                        log_info("end do thread pool work, task name:%s", task_name.c_str());
                     }
                     hb_catch(
                         [&](const auto &e) { log_throw("do thread pool task " + task_name, e); });

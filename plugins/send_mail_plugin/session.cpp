@@ -6,7 +6,7 @@
 namespace hb {
     namespace plugin {
         void session::mail() {
-            log_info << "session::mail begin!!!";
+            log_info("session::mail begin!!!");
             if (host_.size() == 0) {
                 hb::plugin::send_mail_exception e;
                 e.msg("Error! Need set host!");
@@ -44,38 +44,38 @@ namespace hb {
             }
             sock.handshake(boost::asio::ssl::stream_base::client);
             send(sock, "HELO " + user_ + "\r\n");
-            log_info << "mail response:" << get_response(sock);
+            log_info("mail response:%s", get_response(sock).c_str());
 
             send(sock, "auth login\r\n");
-            log_info << "mail response:" << get_response(sock);
+            log_info("mail response:%s", get_response(sock).c_str());
             send(sock, hb::crypto::base64(user_) + "\r\n");
-            log_info << "mail response:" << get_response(sock);
+            log_info("mail response:%s", get_response(sock).c_str());
             send(sock, hb::crypto::base64(pass_) + "\r\n");
-            log_info << "mail response:" << get_response(sock);
+            log_info("mail response:%s", get_response(sock).c_str());
 
             send(sock, "mail from: <" + user_ + ">\r\n");
-            log_info << "mail response:" << get_response(sock);
+            log_info("mail response:%s", get_response(sock).c_str());
             send(sock, "rcpt to: <" + to_ + ">\r\n");
-            log_info << "mail response:" << get_response(sock);
+            log_info("mail response:%s", get_response(sock).c_str());
             send(sock, "data\r\n");
-            log_info << "mail response:" << get_response(sock);
+            log_info("mail response:%s", get_response(sock).c_str());
             send(sock, "From:" + user_ + "\r\n");
-            // log_info << "mail response:" << get_response(sock);
+            // log_info("mail response:%s", get_response(sock).c_str());
             send(sock,"subject:"+subject_+"\r\nMime-Version: 1.0\r\n"
                     "Content-Type: multipart/mixed;   "
                     "boundary=\"INVT\"\r\n\r\n");
-            // log_info << "mail response:" << get_response(sock);
+            // log_info("mail response:%s", get_response(sock).c_str());
             send(sock,
                  "--INVT\r\nContent-Type: text/plain;\r\n  "
                  "charset=\"utf8\"\r\n\r\n"
                      + content_ + "\r\n\r\n");
-            // log_info << "mail response:" << get_response(sock);
+            // log_info("mail response:%s", get_response(sock).c_str());
             send(sock, "\r\n.\r\n");
-            log_info << "mail response:" << get_response(sock);
+            log_info("mail response:%s", get_response(sock).c_str());
             send(sock, "quit\r\n");
-            log_info << "mail response:" << get_response(sock);
+            log_info("mail response:%s", get_response(sock).c_str());
             sock.shutdown(error);
-            log_info << "session::mail end!!!";
+            log_info("session::mail end!!!");
         }
     }  // namespace plugin
 };     // namespace hb

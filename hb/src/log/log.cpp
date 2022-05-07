@@ -1,7 +1,7 @@
 #include <hb/error/exception.h>
 #include <hb/log/log.h>
 #include <stdlib.h>
-
+#include <iostream>
 #include <fstream>
 #include <string>
 
@@ -51,26 +51,25 @@ Asynchronous=false
 AutoFlush=true
 )";
 
-namespace hb {
-    namespace log {
+namespace hb::log {
+    std::mutex mx;
 
-        void initialize_config(const bfs::path& file_path) {
-            if (!boost::filesystem::exists(file_path)) {
-                log_info << "initialize logging is null, write default config info.";
-                std::ofstream log_cfg(file_path.string());
-                log_cfg.write(default_cfg_info, strlen(default_cfg_info));
-                log_cfg.flush();
-                log_cfg.close();
-            }
-
-            std::ifstream file(file_path.c_str());
-            hb_try { logging::init_from_stream(file); }
-            hb_catch([](const auto& e) {
-                log_throw("initialize logging is fail, read log config file fail.", e);
-                std::exit(-2);
-            });
+    void initialize_config(const bfs::path& file_path) {
+        if (!boost::filesystem::exists(file_path)) {
+            log_info("initialize logging is null, write default config info.");
+            std::ofstream log_cfg(file_path.string());
+            log_cfg.write(default_cfg_info, strlen(default_cfg_info));
+            log_cfg.flush();
+            log_cfg.close();
         }
-    }  // namespace log
+
+        std::ifstream file(file_path.c_str());
+        hb_try { logging::init_from_stream(file); }
+        hb_catch([](const auto& e) {
+            log_throw("initialize logging is fail, read log config file fail.", e);
+            std::exit(-2);
+        });
+    }
 }  // namespace hb
 
 // if (!boost::filesystem::exists(app().get_logging_conf()))

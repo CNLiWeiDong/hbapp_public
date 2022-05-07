@@ -21,16 +21,16 @@ namespace hb {
                 "log-server-udp-port");
         }
         void log_server_plugin::plugin_initialize(const variables_map &options) {
-            log_info << "log_server_plugin::plugin_initialize";
+            log_info("log_server_plugin::plugin_initialize");
             my = make_shared<log_server_plugin_impl>(options.at("log-server-udp-port").as<int>());
             my->msg_after(options.at("log-server-msg-after").as<string>());
         }
         void log_server_plugin::plugin_startup() {
-            log_info << "log_server_plugin::plugin_startup";
+            log_info("log_server_plugin::plugin_startup");
             my->start();
         }
         void log_server_plugin::plugin_shutdown() {
-            log_info << "log_server_plugin::plugin_shutdown";
+            log_info("log_server_plugin::plugin_shutdown");
             if (my) my.reset();
         }
     }  // namespace plugin

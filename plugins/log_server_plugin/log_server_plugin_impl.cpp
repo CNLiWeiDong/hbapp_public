@@ -19,9 +19,9 @@ namespace hb {
                         const string log_str(read_data_, bytes_recvd);
                         auto pos = log_str.find(msg_after_);
                         if (pos != string::npos) {
-                            log_info << log_str.substr(pos + msg_after_.size());
+                            log_info(log_str.substr(pos + msg_after_.size()));
                         } else {
-                            log_info << log_str;
+                            log_info(log_str);
                         }
                     }
                     do_receive();

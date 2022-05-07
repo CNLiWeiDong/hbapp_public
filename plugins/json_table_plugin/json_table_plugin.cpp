@@ -18,7 +18,7 @@ namespace hb {
                               "constant-json-config-dir to load all json file!");
         }
         void json_table_plugin::plugin_initialize(const variables_map &options) {
-            log_info << "json_table_plugin::plugin_initialize";
+            log_info("json_table_plugin::plugin_initialize");
             hb_try {
                 my = make_shared<json_table_plugin_impl>();
 
@@ -27,8 +27,7 @@ namespace hb {
                 if (json_path.is_relative()) {
                     json_path = app().config_dir() / json_path;
                 }
-                log_debug << "json_table_plugin::plugin_initialize json path:"
-                          << json_path.string();
+                log_debug("json_table_plugin::plugin_initialize json path:%s",json_path.string().c_str());
                 my->load_json(json_path);
             }
             hb_catch([&](const auto &e) {
@@ -37,11 +36,11 @@ namespace hb {
             });
         }
         void json_table_plugin::plugin_startup() {
-            log_info << "json_table_plugin::plugin_startup";
+            log_info("json_table_plugin::plugin_startup");
             my->start();
         }
         void json_table_plugin::plugin_shutdown() {
-            log_info << "json_table_plugin::plugin_shutdown";
+            log_info("json_table_plugin::plugin_shutdown");
             if (my) my.reset();
         }
     }  // namespace plugin

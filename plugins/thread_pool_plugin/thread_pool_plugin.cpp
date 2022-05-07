@@ -17,14 +17,14 @@ namespace hb {
                               "threads num in thread pool.");
         }
         void thread_pool_plugin::plugin_initialize(const variables_map& options) {
-            log_info << "thread_pool_plugin::plugin_initialize";
+            log_info("thread_pool_plugin::plugin_initialize");
             my = make_shared<thread_pool_plugin_impl>(options.at("thread-pool-count").as<int>());
         }
         void thread_pool_plugin::plugin_startup() {
-            log_info << "thread_pool_plugin::plugin_startup";
+            log_info("thread_pool_plugin::plugin_startup");
         }
         void thread_pool_plugin::plugin_shutdown() {
-            log_info << "thread_pool_plugin::plugin_shutdown";
+            log_info("thread_pool_plugin::plugin_shutdown");
             if (my) my.reset();
         }
     }  // namespace plugin

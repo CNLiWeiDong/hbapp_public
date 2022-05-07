@@ -80,8 +80,8 @@ namespace hb::http_server {
                 std::string req_target(req.target());
                 boost::to_lower(req_target);
                 std::string req_body(req.body());
-                log_info << "======【" << req_target << "】======";
-                log_debug << "【request body】" << req_body;
+                log_info("======【%s】======", req_target.c_str());
+                log_debug("【request body】%s", req_body.c_str());
                 deal_request_data data;
                 data.req_str = req_body;
                 data.result.put("target", req_target);
@@ -95,9 +95,9 @@ namespace hb::http_server {
                         res.set(http::field::server, BOOST_BEAST_VERSION_STRING);
                         res.set(http::field::content_type, "application/text");
                         res.keep_alive(req.keep_alive());
-                        log_debug << "======【response body】======\n" << stream.str();
+                        log_debug("======【response body】======\n%s",stream.str());
                         if (data.result.get("code", 0) != 0) {
-                            log_warn << "======【response body】======\n" << stream.str();
+                            log_warn("======【response body】======\n%s",stream.str());
                         }
                         res.body() = stream.str();
                         res.prepare_payload();

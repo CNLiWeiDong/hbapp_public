@@ -62,7 +62,6 @@ namespace hb::http_server {
                 break;
             }
         }
-        log_debug << "deal_request end! deal_num:" << data.deal_num
-                  << " data.status:" << (unsigned)data.status;
+        log_debug("deal_request end! deal_num:%d data.status:%d" , data.deal_num, (unsigned)data.status);
     }
 }  // namespace hb::http_server

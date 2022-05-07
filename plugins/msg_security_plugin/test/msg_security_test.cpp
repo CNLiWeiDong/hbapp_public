@@ -44,12 +44,12 @@ BOOST_AUTO_TEST_CASE(test_msg_security) {
 
         msg_plugin.encrypt(R"({"a":1,"b":[2,3]})", chiper, encrypted_msg);
         msg_plugin.decrypt(encrypted_msg, chiper, msg);
-        log_info << "encrypted_msg:" << encrypted_msg;
-        log_info << "chiper:" << chiper;
-        log_info << "encrypt and decrypt success!";
-        log_info << "msg:" << msg;
+        log_info("encrypted_msg:%s", encrypted_msg.c_str());
+        log_info("chiper:%s", chiper.c_str());
+        log_info("encrypt and decrypt success!");
+        log_info("msg:%s", msg.c_str());
         boost::trim_if(msg, boost::is_any_of(" \0"));
-        log_info << "msg2:" << msg;
+        log_info("msg2:%s", msg.c_str());
     }
     hb_catch([&](const auto& e) { log_throw("msg_security_test error:", e); });
 }
@@ -72,8 +72,8 @@ BOOST_AUTO_TEST_CASE(test_msg_security_decode) {
         string msg;
 
         msg_plugin.decrypt(encrypted_msg, chiper, msg);
-        log_info << "msg:" << msg;
-        log_info << "msg_hex:" << hb::crypto::hex(msg);
+        log_info("msg:%s", msg.c_str());
+        log_info("msg_hex:%s", hb::crypto::hex(msg).c_str());
     }
     hb_catch([&](const auto& e) { log_throw("msg_security_test error:", e); });
 }
@@ -81,7 +81,7 @@ BOOST_AUTO_TEST_CASE(test_msg_security_decode) {
 // test_msg_security_decode1
 BOOST_AUTO_TEST_CASE(test_msg_security_decode1) {
     hb_try {
-        log_info << "====================================================================";
+        log_info("====================================================================");
 
         auto& msg_plugin = app().get_plugin<msg_security_plugin>();
         string chiper
@@ -100,17 +100,17 @@ BOOST_AUTO_TEST_CASE(test_msg_security_decode1) {
 
         msg_plugin.decrypt(encrypted_msg, chiper, msg);
 
-        log_info << "msg:" << msg;
-        log_info << "msg_hex:" << hb::crypto::hex(msg);
+        log_info("msg:%s", msg.c_str());
+        log_info("msg_hex:%s", hb::crypto::hex(msg).c_str());
 
         boost::trim_if(msg, boost::is_any_of(" \0"));
-        log_info << "msg_hex:" << hb::crypto::hex(msg);
+        log_info("msg_hex:%s", hb::crypto::hex(msg).c_str());
         msg = msg.c_str();
-        log_info << "msg_cstr" << hb::crypto::hex(msg);
+        log_info("msg_cstr:%s", hb::crypto::hex(msg).c_str());
         boost::property_tree::ptree j;
         stringstream stream(msg);
         read_json(stream, j);
-        log_info << j.get("a", 0);
+        log_info(to_string(j.get("a", 0)));
     }
     hb_catch([&](const auto& e) { log_throw("msg_security_test error:", e); });
 }

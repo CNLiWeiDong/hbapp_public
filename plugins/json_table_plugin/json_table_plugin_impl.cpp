@@ -38,8 +38,7 @@ namespace hb::plugin {
         bfs::directory_iterator end;
         for (bfs::directory_iterator dir(src_path); dir != end; dir++) {
             if (dir->path().extension() == ".json") {
-                log_debug << "json_table_plugin load_json json file:"
-                          << dir->path().filename().string();
+                log_debug("json_table_plugin load_json json file: %s",dir->path().filename().string());
                 string basename = dir->path().stem().string();
                 boost::to_lower(basename);
                 auto it = _json_tables.find(basename);

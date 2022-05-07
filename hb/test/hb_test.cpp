@@ -20,21 +20,15 @@ using namespace hb::crypto;
 BOOST_AUTO_TEST_SUITE(cypher_suites)
 // test_log
 BOOST_AUTO_TEST_CASE(test_log) try {
-    log_trace << "log test "
-              << "ok";
-    log_debug << "log test "
-              << "ok";
-    log_info << "log test "
-             << "ok";
-    log_warn << "log test "
-             << "ok";
-    log_error << "log test "
-              << "ok";
-    log_fatal << "log test "
-              << "ok";
+    log_trace("log test %s", "ok");
+    log_debug("log test  %s", "ok");
+    log_info("log test %s", "ok");
+    log_warn("log test %s", "ok");
+    log_error("log test  %s", "ok");
+    log_fatal("log test  %s", "ok");
     BOOST_CHECK_EQUAL(true, true);
 } catch (...) {
-    log_error << "test_log error!";
+    log_error("test_log error!");
 };
 
 BOOST_AUTO_TEST_CASE(test_list) try {
@@ -55,7 +49,7 @@ BOOST_AUTO_TEST_CASE(test_list) try {
         LOG_INFO("log test %d", it);
     }
 } catch (...) {
-    log_error << "test_log error!";
+    log_error("test_log error!");
 };
 
 // test_zip
@@ -81,7 +75,7 @@ BOOST_AUTO_TEST_CASE(test_zip) try {
     }
 
 } catch (...) {
-    log_error << "test_zip error!";
+    log_error("test_zip error!");
 };
 // test_aes
 BOOST_AUTO_TEST_CASE(test_aes) try {
@@ -96,7 +90,7 @@ BOOST_AUTO_TEST_CASE(test_aes) try {
     auto decrypt_data = cfb_aes_decrypt(sha512("123456"), encrypt_data);
     BOOST_CHECK_EQUAL(source_str, decrypt_data);
 } catch (...) {
-    log_error << "test_aes error!";
+    log_error("test_aes error!");
 };
 
 // test_ecb_256_aes
@@ -104,13 +98,13 @@ BOOST_AUTO_TEST_CASE(test_ecb_256_aes) try {
     std::string source_str = "test";
     auto encrypt_data = ecb_256_aes_encrypt(hex(md5("123456")), source_str);
     auto decrypt_data = ecb_256_aes_decrypt(hex(md5("123456")), encrypt_data);
-    log_info << "ecb_256_aes_encrypt key value: " << hex(md5("123456"));
-    log_info << "ecb_256_aes_encrypt [test] value: " << encrypt_data;
-    log_info << "ecb_256_aes_decrypt decrypt_data:" << decrypt_data;
+    log_info("ecb_256_aes_encrypt key value: %s", hex(md5("123456")).c_str());
+    log_info("ecb_256_aes_encrypt [test] value: %s", encrypt_data.c_str());
+    log_info("ecb_256_aes_decrypt decrypt_data: %s", decrypt_data.c_str());
     boost::trim_if(decrypt_data, boost::is_any_of(" \0"));  // "/a/b/c 变成a/b/c"
     BOOST_CHECK_EQUAL(source_str, decrypt_data);
 } catch (...) {
-    log_error << "test_ecb_256_aes error!";
+    log_error("test_ecb_256_aes error!");
 };
 
 // test_ecb_256_aes2
@@ -120,9 +114,9 @@ BOOST_AUTO_TEST_CASE(test_ecb_256_aes2) try {
     auto decrypt_data = ecb_256_aes_decrypt("c829a6948aa3d614f1bc26e39f58ab06",
                                             "FWs+6CI/i6p7Vh7In/utxhamb+6xnB4QnUxkMEF6UrA=");
 
-    log_info << "test_ecb_256_aes2 decrypt_data:" << decrypt_data;
+    log_info("test_ecb_256_aes2 decrypt_data: %s", decrypt_data.c_str());
 } catch (...) {
-    log_error << "test_ecb_256_aes2 error!";
+    log_error("test_ecb_256_aes2 error!");
 };
 
 // test_base64
@@ -137,7 +131,7 @@ BOOST_AUTO_TEST_CASE(test_base64) try {
     auto decrypt_data = base64_to_str(encrypt_data);
     BOOST_CHECK_EQUAL(source_str, decrypt_data);
 } catch (...) {
-    log_error << "test_base64 error!";
+    log_error("test_base64 error!");
 };
 // test_hex
 BOOST_AUTO_TEST_CASE(test_hex) try {
@@ -151,7 +145,7 @@ BOOST_AUTO_TEST_CASE(test_hex) try {
     auto decrypt_data = hex_to_str(encrypt_data);
     BOOST_CHECK_EQUAL(source_str, string(decrypt_data.begin(), decrypt_data.end()));
 } catch (...) {
-    log_error << "test_hex error!";
+    log_error("test_hex error!");
 };
 // test_md5
 BOOST_AUTO_TEST_CASE(test_md5) try {
@@ -163,30 +157,30 @@ BOOST_AUTO_TEST_CASE(test_md5) try {
         "789012345678901234567890123456789012345678901234567890123456789012345678"
         "901234567890");
     auto md5_str1 = md5(source_str1);
-    log_info << "md5 sum:===========" << hex(md5_str1);
+    log_info("md5 sum:===========%s", hex(md5_str1).c_str());
     auto md5_str2 = md5(source_str2);
     BOOST_CHECK_EQUAL(true, md5_str1 != md5_str2);
 } catch (...) {
-    log_error << "test_md5 error!";
+    log_error("test_md5 error!");
 };
 
 // test_sha1
 BOOST_AUTO_TEST_CASE(test_sha1) try {
     BOOST_CHECK_EQUAL(true, sha1("123456") != sha1("1234567"));
 } catch (...) {
-    log_error << "test_sha1 error!";
+    log_error("test_sha1 error!");
 };
 // test_sha256
 BOOST_AUTO_TEST_CASE(test_sha256) try {
     BOOST_CHECK_EQUAL(true, sha256("123456") != sha256("1234567"));
 } catch (...) {
-    log_error << "test_sha256 error!";
+    log_error("test_sha256 error!");
 };
 // test_sha512
 BOOST_AUTO_TEST_CASE(test_sha512) try {
     BOOST_CHECK_EQUAL(true, sha512("123456") != sha512("1234567"));
 } catch (...) {
-    log_error << "test_sha512 error!";
+    log_error("test_sha512 error!");
 };
 
 // test_rsa
@@ -196,12 +190,12 @@ BOOST_AUTO_TEST_CASE(test_rsa) try {
     std::string chiper = rsa_encrypt(strPub, "test");
     BOOST_CHECK_EQUAL(rsa_decrypt(strPri, chiper), "test");
     std::string sig = sign_msg(strPri, "test");
-    log_info << "sig:===========";
-    log_info << base64(sig);
+    log_info("sig:===========");
+    log_info("%s", base64(sig).c_str());
     verify_msg(strPub, "test", sig);
 
 } catch (...) {
-    log_error << "test_rsa error!";
+    log_error("test_rsa error!");
 };
 
 // test_rsa_verify_pub
@@ -227,10 +221,10 @@ Qu6GicksruZ9OJyMC0JBMwii+j4va6cwyu7jJK+VGzZbdhyhk72Y3JXKPpej3AzoAJ2VWhaUZtEP
 6S6XSnz4aBF3JeHCax7SCudYi/6MMgRYGSheVd6T5u7JxsaJy0aRbp2iTlEcsk2CZl6M0WHJOCwi
 KV44gNpFTTkArdddFTONKSuniqmWzDM7cPFkEemIoomhG8hnc26C/IPJ)");
     verify_msg(strPub, "/block/query/userblock1636473734", sig);
-    log_info << "test_rsa_verify_pub success!";
+    log_info("test_rsa_verify_pub success!");
 
 } catch (...) {
-    log_error << "test_rsa_verify_pub error!";
+    log_error("test_rsa_verify_pub error!");
 };
 
 // test_rsa_verify_sign_game_client
@@ -245,10 +239,10 @@ LUA7iD8bbGW4q+bvZwIDAQAB
     std::string sig = base64_to_str(
         R"(KW6M4jqPpeSwmaBkL26ZIZklwjLp/NIasafn675EPX/w1p1L2VsgPixf+UjFcfBOMqxe8w3dzww1fTxbMNLUDY5fTRLO4u7HU0nqNTTCi4BQdH/GZ/c/kEInK6C0g8tcn0EX9NoUpqdNPzA6/lKDwK4xhJbvhL2s+ebzuLiYzXQ=)");
     verify_msg(strPub, "1234567890", sig);
-    log_error << "test_rsa_verify_sign_game_client success!";
+    log_error("test_rsa_verify_sign_game_client success!");
 
 } catch (...) {
-    log_error << "test_rsa_verify_sign_game_client error!";
+    log_error("test_rsa_verify_sign_game_client error!");
 };
 
 // test_rsa_verify_keys
@@ -280,13 +274,13 @@ BC9Eub2fXHis
     std::string chiper = rsa_encrypt(strPub, "test");
     BOOST_CHECK_EQUAL(rsa_decrypt(strPri, chiper), "test");
     std::string sig = sign_msg(strPri, "test");
-    log_info << "sig22222222:===========";
-    log_info << base64(sig);
+    log_info("sig22222222:===========");
+    log_info(base64(sig).c_str());
     verify_msg(strPub, "test", sig);
-    log_info << "test_rsa_verify_keys success!";
+    log_info("test_rsa_verify_keys success!");
 
 } catch (...) {
-    log_error << "test_rsa_verify_keys error!";
+    log_error("test_rsa_verify_keys error!");
 };
 // test_pem
 BOOST_AUTO_TEST_CASE(test_pem) try {
@@ -311,36 +305,36 @@ BOOST_AUTO_TEST_CASE(test_pem) try {
     BOOST_CHECK_EQUAL(pem_str_to_rsa_pub(rsa_pub_to_pem_str(strPub)), strPub);
 
 } catch (...) {
-    log_error << "test_pem error!";
+    log_error("test_pem error!");
 };
 
 // test_http_get
 BOOST_AUTO_TEST_CASE(test_http_get) try {
     hb::http::http h("baidu.com", "80", "/");
     auto status = h.get();
-    log_info << "baidu.com get: " << status << " " << h.res_body();
+    log_info("baidu.com get: %d %s", status, h.res_body().c_str());
 } catch (...) {
-    log_error << "test_http_get error!";
+    log_error("test_http_get error!");
 };
 // test_http_post
 BOOST_AUTO_TEST_CASE(test_http_post) try {
     hb::http::http h("baidu.com", "80", "/");
     auto status = h.post();
-    log_info << "baidu.com post: " << status << " " << h.res_body();
+    log_info("baidu.com post: %d %s", status, h.res_body().c_str());
 } catch (...) {
-    log_error << "test_http_post error!";
+    log_error("test_http_post error!");
 };
 // test_http_async_get
 BOOST_AUTO_TEST_CASE(test_http_async_get) try {
     hb::http::http h("baidu.com", "80", "/");
     boost::asio::io_context ioc;
     h.get(ioc, [](const int &status, const std::string &res) {
-        log_info << "baidu.com async_get: " << status << " " << res;
+        log_info("baidu.com async_get: %d %s", status, res.c_str());
     });
     ioc.run();
 
 } catch (...) {
-    log_error << "test_http_async_get error!";
+    log_error("test_http_async_get error!");
 };
 
 // test_http_async_post
@@ -348,12 +342,12 @@ BOOST_AUTO_TEST_CASE(test_http_async_post) try {
     hb::http::http h("baidu.com", "80", "/");
     boost::asio::io_context ioc;
     h.post(ioc, [](const int &status, const std::string &res) {
-        log_info << "baidu.com async_post: " << status << " " << res;
+        log_info("baidu.com async_post: %d %s", status, res.c_str());
     });
     ioc.run();
 
 } catch (...) {
-    log_error << "test_http_async_post error!";
+    log_error("test_http_async_post error!");
 };
 
 const std::string cert_str = R"(##
@@ -3832,10 +3826,10 @@ BOOST_AUTO_TEST_CASE(test_https_get) try {
     // ctx->set_verify_mode(ssl::verify_none);
     // hs.ctx(ctx);
     auto status = hs.get();
-    log_info << "test_https_get https get: " << status << " " << hs.res_body();
+    log_info("test_https_get https get: %d, %s", status, hs.res_body());
 } catch (...) {
     log_throw("https_test", nullptr);
-    log_error << "test_https_get error!";
+    log_error("test_https_get error!");
 };
 // test_https_async_post
 BOOST_AUTO_TEST_CASE(test_https_async_post) try {
@@ -3845,12 +3839,12 @@ BOOST_AUTO_TEST_CASE(test_https_async_post) try {
     hs.ctx(ctx);
     boost::asio::io_context ioc;
     hs.post(ioc, [](const int &status, const std::string &res) {
-        log_info << "exampleserver.com async_post: " << status << " " << res;
+        log_info("exampleserver.com async_post: %d %s", status, res);
     });
     ioc.run();
 
 } catch (...) {
     log_throw("test_https_async_post test", nullptr);
-    log_error << "test_https_async_post error!";
+    log_error("test_https_async_post error!");
 };
 BOOST_AUTO_TEST_SUITE_END()

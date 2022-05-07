@@ -56,7 +56,7 @@ namespace hb {
 
           private:
             void fail(beast::error_code ec, char const *what) {
-                log_error << what << ": " << ec.message();
+                log_error("%s : %s", what, ec.message().c_str());
                 string message(what);
                 message += ec.message();
                 response_fun_(500, message);
