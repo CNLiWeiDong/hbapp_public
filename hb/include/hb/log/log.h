@@ -63,16 +63,31 @@ namespace hb {
     }  // namespace log
 }  // namespace hb
 
-#define SET_CUSTOM_ATTRIBUTE(VALUE_TYPE, KEY, VALUE)                                  \
+// #define SET_CUSTOM_ATTRIBUTE(VALUE_TYPE, KEY, VALUE)                                  \
+//     boost::log::attribute_cast<boost::log::attributes::mutable_constant<VALUE_TYPE>>( \
+//         hb::log::general_logger::get().get_attributes()[KEY])                         \
+//         .set(VALUE);
+
+// #define LOG_LOCATION(SERVERITY)                                                    \
+//     SET_CUSTOM_ATTRIBUTE(int, "Line", __LINE__)                                    \
+//     SET_CUSTOM_ATTRIBUTE(std::string, "File", hb::log::path_to_filename(__FILE__)) \
+//     SET_CUSTOM_ATTRIBUTE(std::string, "Function", __func__)                        \
+//     BOOST_LOG_SEV(hb::log::general_logger::get(), SERVERITY)
+
+#define SET_CUSTOM_ATTRIBUTE(LG, VALUE_TYPE, KEY, VALUE)                                  \
     boost::log::attribute_cast<boost::log::attributes::mutable_constant<VALUE_TYPE>>( \
-        hb::log::general_logger::get().get_attributes()[KEY])                         \
+        LG.get_attributes()[KEY])                         \
         .set(VALUE);
 
-#define LOG_LOCATION(SERVERITY)                                                    \
-    SET_CUSTOM_ATTRIBUTE(int, "Line", __LINE__)                                    \
-    SET_CUSTOM_ATTRIBUTE(std::string, "File", hb::log::path_to_filename(__FILE__)) \
-    SET_CUSTOM_ATTRIBUTE(std::string, "Function", __func__)                        \
-    BOOST_LOG_SEV(hb::log::general_logger::get(), SERVERITY)
+#define LOG_LOCATION(SERVERITY)                                                             \
+    ({                                                                                      \
+        auto lg = hb::log::general_logger::get();                                           \
+        SET_CUSTOM_ATTRIBUTE(lg, int, "Line", __LINE__);                                    \
+        SET_CUSTOM_ATTRIBUTE(lg, std::string, "File", hb::log::path_to_filename(__FILE__)); \
+        SET_CUSTOM_ATTRIBUTE(lg, std::string, "Function", __func__);                        \
+        BOOST_LOG_SEV(lg, SERVERITY);                                                       \
+        lg;                                                                                 \
+    })                                                                                      \
 
 #define log_trace LOG_LOCATION(hb::log::trivial::trace)
 #define log_debug LOG_LOCATION(hb::log::trivial::debug)
