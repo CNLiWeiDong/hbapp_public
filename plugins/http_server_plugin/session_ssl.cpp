@@ -39,7 +39,7 @@ namespace hb {
         void session_ssl::on_read(beast::error_code ec, std::size_t bytes_transferred) {
             boost::ignore_unused(bytes_transferred);
             // This means they closed the connection
-            if (ec == http::error::end_of_stream) return do_close_read();
+            if (ec == http::error::end_of_stream) return do_close();
             if (ec) {
                 LOG_ERROR("read error: %s", ec.message().c_str());
                 return do_close();
@@ -55,7 +55,7 @@ namespace hb {
                 return do_close();
             }
             if (close) {
-                return do_close_write();
+                return do_close();
             }
             // We're done with the response so delete it
             res_ = nullptr;
@@ -64,8 +64,13 @@ namespace hb {
         }
 
         void session_ssl::do_close() {
-            beast::error_code ec;
-            stream_.shutdown(ec);
+            hb_try{
+                beast::error_code ec;
+                stream_.shutdown(ec);
+            } 
+            hb_catch([&](const auto &e) {
+                log_throw("https session do_close error:", e);
+            });
         }
         void session_ssl::do_close_read() {
             beast::error_code ec;

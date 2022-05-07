@@ -43,12 +43,12 @@ namespace hb {
         void session::do_close() { 
             hb_try{
                 beast::error_code ec;
-                stream_.socket().shutdown(tcp::socket::shutdown_send, ec);
-                // stream_.socket().shutdown(tcp::socket::shutdown_receive, ec);
-                // stream_.socket().close(); 
+                // stream_.socket().shutdown(tcp::socket::shutdown_send, ec);
+                // // stream_.socket().shutdown(tcp::socket::shutdown_receive, ec);
+                stream_.socket().close(); 
             } 
             hb_catch([&](const auto &e) {
-                log_throw("get_transaction_receipt deal response error:", e);
+                log_throw("http session do_close error:", e);
             });
            
         }
