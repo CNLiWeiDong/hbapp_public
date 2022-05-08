@@ -31,8 +31,25 @@ namespace hb::crypto {
         return n;
     }
 
+    hb::type::uint256_t hex_to_dec256(std::string hex_str) {
+        if (boost::istarts_with(hex_str, "0x")) {  // 不区分大小写
+            hex_str = std::string(hex_str.begin() + 2, hex_str.end());
+        }
+        hb::type::uint256_t n;
+        std::istringstream(hex_str) >> std::hex >> n;
+        return n;
+    }
+
     //十进制数字转十六进字符串
     std::string dec_to_hex(int64_t decn) {
+        std::stringstream ss;
+        // std::showbase <<
+        ss << std::hex << std::nouppercase << decn;
+        std::string hex_str = ss.str();
+        return "0x"+hex_str;
+    }
+
+    std::string dec256_to_hex(hb::type::uint256_t decn) {
         std::stringstream ss;
         // std::showbase <<
         ss << std::hex << std::nouppercase << decn;
