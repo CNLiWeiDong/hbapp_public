@@ -1,5 +1,7 @@
 #include <hb/https/https.h>
 #include <hb/https/https_error.h>
+#include <hb/sync/sync_signal.h>
+#include <thread>
 
 namespace hb::https {
     void https::load_certificates() {
@@ -27,7 +29,7 @@ namespace hb::https {
             // The io_context is required for all I/O
             net::io_context ioc;
             // boost::system::error_code ec;
-            load_certificates();
+           // load_certificates();
             // These objects perform our I/O
             tcp::resolver resolver(ioc);
             beast::ssl_stream<beast::tcp_stream> stream(ioc, *ctx_);
@@ -73,11 +75,42 @@ namespace hb::https {
         });
         return 0;
     }
+    int https::request(net::io_context &ioc) {
+        auto signal = make_shared<hb::sycn::sync_signal>(true, expires_+1);
+        shared_ptr<int> st = make_shared<int>(400);
+        shared_ptr<string> res = make_shared<string>("time out");
+
+        auto sess = std::make_shared<session>(ioc, *ctx_, req_, 
+            [=](const int &status, const std::string &response){
+                hb_try{
+                    *st = status;
+                    *res = response;
+                    signal->send();
+                }
+                hb_catch([&](const auto &e) {
+                    log_throw("sync post https error:", e);
+                });
+                
+            });
+        sess->expires(expires_);
+        sess->request(host_, port_);
+        signal->wait();
+        res_body_ = *res;
+        return *st;
+    }
+    
     int https::get() {
+        load_certificates();
         req_.method(beast::http::verb::get);
         return request();
     }
+    int https::get(net::io_context &ioc) {
+        load_certificates();
+        req_.method(beast::http::verb::get);
+        return request(ioc);
+    }
     int https::post() {
+        load_certificates();
         req_.method(beast::http::verb::post);
         req_.set(beast::http::field::content_length,
                  boost::lexical_cast<std::string>(req_body_.size()));
@@ -85,6 +118,16 @@ namespace hb::https {
         req_.body() = req_body_;  // beast::http::field::body不起作用
         req_.prepare_payload();
         return request();
+    }
+    int https::post(net::io_context &ioc) {
+        load_certificates();
+        req_.method(beast::http::verb::post);
+        req_.set(beast::http::field::content_length,
+                 boost::lexical_cast<std::string>(req_body_.size()));
+        // req_.set(beast::http::field::body, req_body_);
+        req_.body() = req_body_;  // beast::http::field::body不起作用
+        req_.prepare_payload();
+        return request(ioc);
     }
     void https::post(net::io_context &ioc, const response_fun_type &callback) {
         load_certificates();

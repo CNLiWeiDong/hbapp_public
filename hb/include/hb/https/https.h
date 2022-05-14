@@ -68,11 +68,14 @@ namespace hb {
             ~https() {}
             int post();
             int get();
+            int post(net::io_context &ioc);
+            int get(net::io_context &ioc);
             void post(net::io_context &ioc, const response_fun_type &callback);
             void get(net::io_context &ioc, const response_fun_type &callback);
 
           private:
             int request();
+            int request(net::io_context &ioc);
             void load_certificates();
         };
     }  // namespace https
