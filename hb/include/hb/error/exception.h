@@ -60,7 +60,8 @@ namespace hb::error {
         }
 
       public:
-        template <class... TOther> Impl msg(const std::string& fmt_str, TOther&&... other) {
+        template <class... TOther> 
+        Impl& msg(const std::string& fmt_str, TOther&&... other) {
             boost::format fmt("%s" + fmt_str);
             string_format(fmt, "", other...);
             msg_ = fmt.str();
