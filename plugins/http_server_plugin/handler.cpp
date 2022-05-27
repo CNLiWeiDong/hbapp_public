@@ -55,8 +55,10 @@ namespace hb::http_server {
                 // a(data)的结果当成（a/b)的参数 （a/b)的结果当成(a/b/c)的参数
                 (*sig)(data);  // sig() return a boost::optional containing the result returned by
                                // the last slot called.
-                data.deal_num++;
-                data.deal_targets.push_back(target);
+                if (target!="root") {
+                    data.deal_num++;
+                    data.deal_targets.push_back(target);
+                }
             }
             if (data.status != deal_status::ok) {
                 break;
