@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 project(send_mail_plugin)
 
+set(CMAKE_CXX_STANDARD 20)
+
 file(GLOB HEADERS "include/hb/send_mail_plugin/*.h"
         )
 
@@ -19,5 +21,4 @@ target_link_libraries( send_mail_plugin
         appbase
         hb
         log_plugin
-        thread_pool_plugin
         )

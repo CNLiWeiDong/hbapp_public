@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 set(CMAKE_SYSTEM_NAME Linux )
+set(CMAKE_CXX_STANDARD 20)
 
 SET (CMAKE_C_COMPILER             "/usr/bin/clang")
 SET (CMAKE_C_FLAGS                "-Wall -std=c99")
@@ -20,3 +21,9 @@ SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
 # SET (CMAKE_NM      "/usr/bin/llvm-nm")
 # SET (CMAKE_OBJDUMP "/usr/bin/llvm-objdump")
 # SET (CMAKE_RANLIB  "/usr/bin/llvm-ranlib")
+
+#if(CONAN_LIBCXX STREQUAL "libstdc++11")
+#    add_definitions(-D_GLIBCXX_USE_CXX11_ABI=1)
+#elseif(CONAN_LIBCXX STREQUAL "libstdc++")
+#    add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
+#endif()
