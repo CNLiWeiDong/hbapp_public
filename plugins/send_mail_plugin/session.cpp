@@ -66,7 +66,7 @@ namespace hb {
                     "boundary=\"INVT\"\r\n\r\n");
             // log_info("mail response:%s", get_response(sock).c_str());
             send(sock,
-                 "--INVT\r\nContent-Type: text/plain;\r\n  "
+                 "--INVT\r\nContent-Type: text/html;\r\n  "
                  "charset=\"utf8\"\r\n\r\n"
                      + _content + "\r\n\r\n");
             // log_info("mail response:%s", get_response(sock).c_str());
